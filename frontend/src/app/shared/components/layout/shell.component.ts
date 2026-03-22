@@ -172,21 +172,21 @@ interface NavItem {
     }
 
     .nav-icon-wrapper {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--nav-accent, #f1f5f9);
+      background: var(--color-bg-warm);
       transition: all 0.2s ease;
     }
 
     @media (min-width: 640px) {
       .nav-icon-wrapper {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
       }
     }
 
@@ -228,9 +228,9 @@ interface NavItem {
 })
 export class ShellComponent {
   navItems: NavItem[] = [
-    { label: 'Hoy', icon: 'pi-sun', route: '/today', color: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' },
-    { label: 'Semana', icon: 'pi-calendar', route: '/weekly', color: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)' },
-    { label: 'Progreso', icon: 'pi-chart-line', route: '/progress', color: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' }
+    { label: 'Hoy', icon: 'pi-sun', route: '/today', color: 'var(--color-primary-light)' },
+    { label: 'Semana', icon: 'pi-calendar', route: '/weekly', color: 'var(--color-primary-light)' },
+    { label: 'Progreso', icon: 'pi-chart-line', route: '/progress', color: 'var(--color-primary-light)' }
   ];
 
   get currentDay(): string {

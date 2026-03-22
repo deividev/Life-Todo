@@ -150,22 +150,22 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
           </ng-template>
           <div class="grid grid-cols-3 gap-3 sm:gap-4">
             <div class="metric-card">
-              <div class="metric-icon" style="background: #dbeafe">
-                <i class="pi pi-user-edit" style="color: #3b82f6"></i>
+              <div class="metric-icon" style="background: var(--color-measure-weight)">
+                <i class="pi pi-user-edit" style="color: var(--color-measure-weight-icon)"></i>
               </div>
               <div class="metric-value">{{ latestWeekly()!.weightKg || '--' }}</div>
               <div class="metric-label">kg</div>
             </div>
             <div class="metric-card">
-              <div class="metric-icon" style="background: #f3e8ff">
-                <i class="pi pi-arrows-h" style="color: #8b5cf6"></i>
+              <div class="metric-icon" style="background: var(--color-measure-waist)">
+                <i class="pi pi-arrows-h" style="color: var(--color-measure-waist-icon)"></i>
               </div>
               <div class="metric-value">{{ latestWeekly()!.waistCm || '--' }}</div>
               <div class="metric-label">cintura</div>
             </div>
             <div class="metric-card">
-              <div class="metric-icon" style="background: #fce7f3">
-                <i class="pi pi-arrow-right-arrow-left" style="color: #ec4899"></i>
+              <div class="metric-icon" style="background: var(--color-measure-arm)">
+                <i class="pi pi-arrow-right-arrow-left" style="color: var(--color-measure-arm-icon)"></i>
               </div>
               <div class="metric-value">{{ latestWeekly()!.armCm || '--' }}</div>
               <div class="metric-label">brazo</div>
@@ -181,13 +181,13 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .section-card {
-      @apply mb-4;
+      @apply mb-3;
     }
 
     .hero-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
@@ -198,20 +198,20 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
 
     @media (min-width: 640px) {
       .hero-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
       }
     }
 
     .hero-icon i {
-      font-size: 20px;
+      font-size: 18px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .hero-icon i {
-        font-size: 26px;
+        font-size: 22px;
       }
     }
 
@@ -220,48 +220,60 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .hero-subtitle {
-      @apply text-xs sm:text-sm text-white/80 mt-0.5;
+      @apply text-xs sm:text-sm text-white/80;
     }
 
     .weight-change-badge {
-      @apply flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm;
+      @apply flex items-center gap-1.5 px-2 py-1 rounded-lg font-bold text-xs;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       color: white;
     }
 
+    @media (min-width: 640px) {
+      .weight-change-badge {
+        @apply px-3 py-1.5 rounded-xl text-sm;
+      }
+    }
+
     .weight-change-badge i {
-      @apply text-base sm:text-lg;
+      @apply text-sm;
+    }
+
+    @media (min-width: 640px) {
+      .weight-change-badge i {
+        @apply text-base;
+      }
     }
 
     .weight-change-badge.positive i,
     .weight-change-badge.positive {
-      color: #a7f3d0;
+      color: var(--color-success-light);
     }
 
     .weight-change-badge.negative i,
     .weight-change-badge.negative {
-      color: #fecaca;
+      color: var(--color-danger-light);
     }
 
     .chart-card {
-      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      @apply bg-white rounded-xl p-3 border border-slate-200;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     @media (min-width: 640px) {
       .chart-card {
-        @apply p-4 rounded-2xl;
+        @apply p-4 rounded-xl;
       }
     }
 
     .chart-card canvas {
-      height: 180px !important;
+      height: 160px !important;
     }
 
     @media (min-width: 640px) {
       .chart-card canvas {
-        height: 220px !important;
+        height: 180px !important;
       }
     }
 
@@ -269,92 +281,91 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 4px 0;
-    }
-
-    @media (min-width: 640px) {
-      .card-header {
-        gap: 12px;
-      }
     }
 
     .stat-card {
-      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200 text-center;
+      @apply bg-white rounded-xl p-3 border border-slate-200 text-center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       transition: all 0.2s ease;
     }
 
     @media (min-width: 640px) {
       .stat-card {
-        @apply p-4 rounded-2xl;
+        @apply p-3.5 rounded-xl;
       }
     }
 
     .stat-card:hover {
-      @apply border-teal-200 shadow-md;
+      @apply border-teal-200;
       transform: translateY(-2px);
     }
 
     .stat-icon-wrapper {
-      @apply w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .stat-icon-wrapper i {
-      @apply text-lg sm:text-xl;
-    }
-
-    .progress-section {
-      @apply space-y-4;
+      @apply w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mx-auto mb-1.5;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     @media (min-width: 640px) {
-      .progress-section {
-        @apply space-y-5;
+      .stat-icon-wrapper {
+        @apply mb-2;
       }
     }
 
+    .stat-icon-wrapper i {
+      @apply text-sm sm:text-base;
+    }
+
+    .progress-section {
+      @apply space-y-3;
+    }
+
     .progress-row {
-      @apply flex items-start gap-2.5 sm:gap-3;
+      @apply flex items-start gap-2.5;
     }
 
     .progress-icon {
-      @apply w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0;
+      @apply w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0;
     }
 
     .progress-icon i {
-      @apply text-base sm:text-lg;
+      @apply text-sm sm:text-base;
     }
 
     .progress-content {
-      @apply flex-1 pt-0.5 sm:pt-1;
+      @apply flex-1 pt-0.5;
     }
 
     .metric-card {
-      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center border border-slate-200;
+      @apply bg-white rounded-xl p-3 text-center border border-slate-200;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     @media (min-width: 640px) {
       .metric-card {
-        @apply p-4 rounded-2xl;
+        @apply p-3.5 rounded-xl;
       }
     }
 
     .metric-icon {
-      @apply w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1.5 sm:mb-2;
+      @apply w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mx-auto mb-1;
+    }
+
+    @media (min-width: 640px) {
+      .metric-icon {
+        @apply mb-1.5;
+      }
     }
 
     .metric-icon i {
-      @apply text-base sm:text-lg;
+      @apply text-sm sm:text-base;
     }
 
     .metric-value {
-      @apply text-xl sm:text-2xl font-bold text-slate-900 tracking-tight;
+      @apply text-lg sm:text-xl font-bold text-slate-900 tracking-tight;
     }
 
     .metric-label {
-      @apply text-[10px] sm:text-xs text-slate-500 mt-1 font-semibold uppercase tracking-wide;
+      @apply text-[10px] text-slate-500 font-semibold uppercase tracking-wide;
     }
   `]
 })
@@ -381,17 +392,17 @@ export class ProgressComponent implements OnInit, AfterViewInit {
   };
 
   mealColors: Record<string, { color: string; bgColor: string }> = {
-    'breakfast': { color: '#d97706', bgColor: '#fef3c7' },
-    'lunch': { color: '#c2410c', bgColor: '#fed7aa' },
-    'snack': { color: '#7c3aed', bgColor: '#e9d5ff' },
-    'dinner': { color: '#2563eb', bgColor: '#dbeafe' }
+    'breakfast': { color: 'var(--color-meal-breakfast-icon)', bgColor: 'var(--color-meal-breakfast)' },
+    'lunch': { color: 'var(--color-meal-lunch-icon)', bgColor: 'var(--color-meal-lunch)' },
+    'snack': { color: 'var(--color-meal-snack-icon)', bgColor: 'var(--color-meal-snack)' },
+    'dinner': { color: 'var(--color-meal-dinner-icon)', bgColor: 'var(--color-meal-dinner)' }
   };
 
   private activityColors: Record<string, { color: string; bgColor: string }> = {
-    'Ninguna': { color: '#64748b', bgColor: '#f1f5f9' },
-    'Paseo': { color: '#10b981', bgColor: '#d1fae5' },
-    'Ejercicio': { color: '#f59e0b', bgColor: '#fef3c7' },
-    'Ambos': { color: '#6366f1', bgColor: '#e0e7ff' }
+    'Ninguna': { color: 'var(--color-activity-none-icon)', bgColor: 'var(--color-activity-none)' },
+    'Paseo': { color: 'var(--color-activity-walk-icon)', bgColor: 'var(--color-activity-walk)' },
+    'Ejercicio': { color: 'var(--color-activity-exercise-icon)', bgColor: 'var(--color-activity-exercise)' },
+    'Ambos': { color: 'var(--color-activity-both-icon)', bgColor: 'var(--color-activity-both)' }
   };
 
   private activityIcons: Record<string, string> = {

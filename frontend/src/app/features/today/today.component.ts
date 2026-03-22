@@ -200,51 +200,43 @@ interface ActivityOption {
     }
 
     .section-card {
-      @apply mb-4;
+      @apply mb-3;
     }
 
     .card-header {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 4px 0;
-    }
-
-    @media (min-width: 640px) {
-      .card-header {
-        gap: 12px;
-      }
     }
 
     .hero-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
       flex-shrink: 0;
     }
 
     @media (min-width: 640px) {
       .hero-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
       }
     }
 
     .hero-icon i {
-      font-size: 20px;
+      font-size: 18px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .hero-icon i {
-        font-size: 26px;
+        font-size: 22px;
       }
     }
 
@@ -253,7 +245,7 @@ interface ActivityOption {
     }
 
     .hero-subtitle {
-      @apply text-xs sm:text-sm text-white/80 mt-0.5;
+      @apply text-xs sm:text-sm text-white/80;
     }
 
     :host ::ng-deep .meal-btn[data-active="true"],
@@ -262,43 +254,33 @@ interface ActivityOption {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 10px 4px !important;
-      min-height: 72px;
+      padding: 8px 4px !important;
+      min-height: 64px;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .meal-btn[data-active="true"],
       :host ::ng-deep .activity-btn {
-        padding: 14px 8px !important;
-        min-height: 88px;
+        padding: 10px 6px !important;
+        min-height: 72px;
       }
     }
 
-    :host ::ng-deep .meal-btn[data-active="true"] {
-      @apply bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-500 text-white shadow-md;
-    }
-
-    :host ::ng-deep .meal-btn[data-active="true"]:hover {
-      @apply from-emerald-600 to-emerald-700;
-    }
-
+    :host ::ng-deep .meal-btn[data-active="true"],
     :host ::ng-deep .activity-btn.p-button-success {
-      @apply bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-500 text-white shadow-md;
+      background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%) !important;
+      border-color: var(--color-success) !important;
+      color: white;
     }
 
     :host ::ng-deep .meal-btn .p-button-label,
     :host ::ng-deep .activity-btn .p-button-label {
-      @apply text-[10px] sm:text-xs font-semibold mt-1 sm:mt-2;
+      @apply text-[10px] sm:text-xs font-semibold mt-1;
     }
 
     :host ::ng-deep .meal-btn .p-button-icon,
     :host ::ng-deep .activity-btn .p-button-icon {
-      @apply text-lg sm:text-xl;
-    }
-
-    :host ::ng-deep .energy-selector,
-    :host ::ng-deep .appetite-selector {
-      width: 100%;
+      @apply text-base sm:text-lg;
     }
 
     :host ::ng-deep .energy-selector .p-selectbutton,
@@ -311,16 +293,16 @@ interface ActivityOption {
     :host ::ng-deep .appetite-selector .p-button {
       flex: 1;
       justify-content: center;
-      padding: 10px 8px;
-      border-radius: 12px;
+      padding: 8px 6px;
+      border-radius: 10px;
       font-size: 0.75rem;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .energy-selector .p-button,
       :host ::ng-deep .appetite-selector .p-button {
-        padding: 14px 16px;
-        border-radius: 14px;
+        padding: 10px 12px;
+        border-radius: 12px;
         font-size: 0.875rem;
       }
     }
@@ -353,17 +335,17 @@ export class TodayComponent {
   });
 
   mealOptions: MealOption[] = [
-    { key: 'breakfast', label: 'Desayuno', icon: 'pi-sun', bgColor: '#fef3c7', iconColor: '#d97706' },
-    { key: 'lunch', label: 'Almuerzo', icon: 'pi-coffee', bgColor: '#fed7aa', iconColor: '#c2410c' },
-    { key: 'snack', label: 'Merienda', icon: 'pi-briefcase', bgColor: '#e9d5ff', iconColor: '#7c3aed' },
-    { key: 'dinner', label: 'Cena', icon: 'pi-moon', bgColor: '#dbeafe', iconColor: '#2563eb' }
+    { key: 'breakfast', label: 'Desayuno', icon: 'pi-sun', bgColor: 'var(--color-meal-breakfast)', iconColor: 'var(--color-meal-breakfast-icon)' },
+    { key: 'lunch', label: 'Almuerzo', icon: 'pi-coffee', bgColor: 'var(--color-meal-lunch)', iconColor: 'var(--color-meal-lunch-icon)' },
+    { key: 'snack', label: 'Merienda', icon: 'pi-briefcase', bgColor: 'var(--color-meal-snack)', iconColor: 'var(--color-meal-snack-icon)' },
+    { key: 'dinner', label: 'Cena', icon: 'pi-moon', bgColor: 'var(--color-meal-dinner)', iconColor: 'var(--color-meal-dinner-icon)' }
   ];
 
   activityOptions: ActivityOption[] = [
-    { value: 'none', label: 'Ninguna', icon: 'pi-minus', color: '#64748b', bgColor: '#f1f5f9' },
-    { value: 'walk', label: 'Paseo', icon: 'pi-directions-walk', color: '#10b981', bgColor: '#d1fae5' },
-    { value: 'exercise', label: 'Ejercicio', icon: 'pi-bolt', color: '#f59e0b', bgColor: '#fef3c7' },
-    { value: 'walk_and_exercise', label: 'Ambos', icon: 'pi-star', color: '#6366f1', bgColor: '#e0e7ff' }
+    { value: 'none', label: 'Ninguna', icon: 'pi-minus', color: 'var(--color-activity-none-icon)', bgColor: 'var(--color-activity-none)' },
+    { value: 'walk', label: 'Paseo', icon: 'pi-directions-walk', color: 'var(--color-activity-walk-icon)', bgColor: 'var(--color-activity-walk)' },
+    { value: 'exercise', label: 'Ejercicio', icon: 'pi-bolt', color: 'var(--color-activity-exercise-icon)', bgColor: 'var(--color-activity-exercise)' },
+    { value: 'walk_and_exercise', label: 'Ambos', icon: 'pi-star', color: 'var(--color-activity-both-icon)', bgColor: 'var(--color-activity-both)' }
   ];
 
   energyOptions = [

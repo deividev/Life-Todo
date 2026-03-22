@@ -209,7 +209,7 @@ interface MeasureInput {
     }
 
     .section-card {
-      @apply mb-4;
+      @apply mb-3;
     }
 
     .summary-card {
@@ -220,19 +220,12 @@ interface MeasureInput {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 4px 0;
-    }
-
-    @media (min-width: 640px) {
-      .card-header {
-        gap: 12px;
-      }
     }
 
     .hero-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
@@ -243,20 +236,20 @@ interface MeasureInput {
 
     @media (min-width: 640px) {
       .hero-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
       }
     }
 
     .hero-icon i {
-      font-size: 20px;
+      font-size: 18px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .hero-icon i {
-        font-size: 26px;
+        font-size: 22px;
       }
     }
 
@@ -265,30 +258,30 @@ interface MeasureInput {
     }
 
     .hero-subtitle {
-      @apply text-xs sm:text-sm text-white/80 mt-0.5;
+      @apply text-xs sm:text-sm text-white/80;
     }
 
     .measure-card {
-      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200 text-center;
+      @apply bg-white rounded-xl p-3 border border-slate-200 text-center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     @media (min-width: 640px) {
       .measure-card {
-        @apply p-4 rounded-2xl;
+        @apply p-3.5 rounded-xl;
       }
     }
 
     .measure-icon {
-      @apply w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2;
+      @apply w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mx-auto mb-1.5;
     }
 
     .measure-icon i {
-      @apply text-base sm:text-lg;
+      @apply text-sm sm:text-base;
     }
 
     .measure-label {
-      @apply text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 block;
+      @apply text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-2 block;
     }
 
     :host ::ng-deep .feeling-btn {
@@ -296,27 +289,29 @@ interface MeasureInput {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 12px 8px;
-      min-height: 72px;
+      padding: 10px 6px;
+      min-height: 64px;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .feeling-btn {
-        padding: 16px 12px;
-        min-height: 88px;
+        padding: 12px 8px;
+        min-height: 72px;
       }
     }
 
     :host ::ng-deep .feeling-btn .p-button-label {
-      @apply text-xs sm:text-sm font-semibold mt-1 sm:mt-2;
+      @apply text-[10px] sm:text-xs font-semibold mt-1;
     }
 
     :host ::ng-deep .feeling-btn .p-button-icon {
-      @apply text-xl sm:text-2xl;
+      @apply text-lg sm:text-xl;
     }
 
     :host ::ng-deep .feeling-btn.p-button-warn {
-      @apply bg-gradient-to-br from-amber-500 to-orange-500 border-amber-500 text-white shadow-md;
+      background: linear-gradient(135deg, var(--color-warning) 0%, var(--color-warning-dark) 100%) !important;
+      border-color: var(--color-warning) !important;
+      color: white;
     }
 
     :host ::ng-deep .p-inputnumber {
@@ -346,9 +341,9 @@ export class WeeklyComponent implements OnInit {
   saved = signal(false);
 
   measureInputs: (MeasureInput & { value: number | null })[] = [
-    { label: 'Peso', icon: 'pi-user-edit', unit: 'kg', min: 30, max: 200, color: '#3b82f6', bgColor: '#dbeafe', value: null },
-    { label: 'Cintura', icon: 'pi-arrows-h', unit: 'cm', min: 50, max: 150, color: '#8b5cf6', bgColor: '#f3e8ff', value: null },
-    { label: 'Brazo', icon: 'pi-arrow-right-arrow-left', unit: 'cm', min: 20, max: 50, color: '#ec4899', bgColor: '#fce7f3', value: null }
+    { label: 'Peso', icon: 'pi-user-edit', unit: 'kg', min: 30, max: 200, color: 'var(--color-measure-weight-icon)', bgColor: 'var(--color-measure-weight)', value: null },
+    { label: 'Cintura', icon: 'pi-arrows-h', unit: 'cm', min: 50, max: 150, color: 'var(--color-measure-waist-icon)', bgColor: 'var(--color-measure-waist)', value: null },
+    { label: 'Brazo', icon: 'pi-arrow-right-arrow-left', unit: 'cm', min: 20, max: 50, color: 'var(--color-measure-arm-icon)', bgColor: 'var(--color-measure-arm)', value: null }
   ];
 
   feelingOptions: { value: WeeklyFeeling; label: string; icon: string }[] = [
