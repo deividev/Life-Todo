@@ -2,6 +2,9 @@ import { Component, inject, signal, OnInit, AfterViewInit, ElementRef, ViewChild
 import { Chart, registerables } from 'chart.js';
 import { Card } from 'primeng/card';
 import { ProgressBar } from 'primeng/progressbar';
+import { Tag } from 'primeng/tag';
+import { Badge } from 'primeng/badge';
+import { Button } from 'primeng/button';
 import { ProgressService } from '../../core/services/progress.service';
 
 Chart.register(...registerables);
@@ -13,7 +16,7 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
 @Component({
   selector: 'app-progress',
   standalone: true,
-  imports: [Card, ProgressBar],
+  imports: [Card, ProgressBar, Tag, Badge],
   template: `
     <div class="animate-fade-in">
       <div class="page-header">
@@ -23,150 +26,155 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
         </div>
       </div>
 
-      <div class="space-y-4">
-        <p-card styleClass="card-elevated">
-          <ng-template pTemplate="header">
-            <div class="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-primary-light/30 to-transparent">
-              <div class="flex items-center gap-3">
-                <div class="card-header-icon">
-                  <i class="pi pi-chart-line"></i>
-                </div>
-                <div>
-                  <span class="font-bold text-sm text-text">Evolución de peso</span>
-                  <p class="text-xs text-text-muted mt-0.5">Últimas 12 semanas</p>
-                </div>
-              </div>
-              @if (weightChange() !== null) {
-                <div class="weight-change-badge" 
-                     [class.positive]="weightChange()! < 0" 
-                     [class.negative]="weightChange()! > 0">
-                  <i [class]="weightChange()! < 0 ? 'pi pi-arrow-down' : weightChange()! > 0 ? 'pi pi-arrow-up' : 'pi pi-minus'"></i>
-                  {{ weightChange()! > 0 ? '+' : '' }}{{ weightChange() }} kg
-                </div>
-              }
-            </div>
-          </ng-template>
-          @if (weightData().length > 0) {
-            <div class="chart-container">
-              <canvas #weightChart></canvas>
-            </div>
-          } @else {
-            <div class="empty-state">
-              <div class="empty-state-icon-wrapper">
-                <i class="pi pi-chart-line empty-state-icon"></i>
-              </div>
-              <p class="empty-state-text">Registra tu peso semanalmente para ver la evolución</p>
-            </div>
-          }
-        </p-card>
-
-        <p-card>
-          <ng-template pTemplate="header">
-            <div class="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-bg-warm/50 to-transparent">
+      <p-card styleClass="section-card">
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <div class="flex items-center gap-3 flex-1">
               <div class="card-header-icon">
-                <i class="pi pi-utensils"></i>
+                <i class="pi pi-chart-line"></i>
               </div>
               <div>
-                <span class="font-bold text-sm text-text">Comidas registradas</span>
-                <p class="text-xs text-text-muted mt-0.5">Últimos 30 días</p>
+                <span class="font-bold text-base text-text">Evolución de peso</span>
+                <p class="text-xs text-text-muted mt-0.5">Últimas 12 semanas</p>
               </div>
             </div>
-          </ng-template>
-          <div class="grid grid-cols-2 gap-3">
-            @for (meal of mealStats(); track meal.name) {
-              <div class="meal-stat-card">
-                <div class="meal-stat-icon" [style.background]="meal.color">
-                  <i [class]="'pi ' + mealIcons[meal.icon]"></i>
+            @if (weightChange() !== null) {
+              <p-tag 
+                [value]="(weightChange()! > 0 ? '+' : '') + weightChange() + ' kg'"
+                [severity]="weightChange()! < 0 ? 'success' : weightChange()! > 0 ? 'danger' : 'secondary'"
+                [icon]="weightChange()! < 0 ? 'pi pi-arrow-down' : weightChange()! > 0 ? 'pi pi-arrow-up' : 'pi pi-minus'"
+              />
+            }
+          </div>
+        </ng-template>
+        @if (weightData().length > 0) {
+          <div class="chart-container">
+            <canvas #weightChart></canvas>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <div class="empty-state-icon-wrapper">
+              <i class="pi pi-chart-line empty-state-icon"></i>
+            </div>
+            <p class="empty-state-text">Registra tu peso semanalmente para ver la evolución</p>
+          </div>
+        }
+      </p-card>
+
+      <p-card styleClass="section-card">
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <div class="card-header-icon">
+              <i class="pi pi-utensils"></i>
+            </div>
+            <div>
+              <span class="font-bold text-base text-text">Comidas registradas</span>
+              <p class="text-xs text-text-muted mt-0.5">Últimos 30 días</p>
+            </div>
+          </div>
+        </ng-template>
+        <div class="grid grid-cols-2 gap-4">
+          @for (meal of mealStats(); track meal.name) {
+            <div class="meal-stat-card">
+              <div class="meal-stat-icon" [style.background]="meal.color">
+                <i [class]="'pi ' + mealIcons[meal.icon]"></i>
+              </div>
+              <div class="meal-stat-content">
+                <div class="meal-stat-value">{{ meal.count }}</div>
+                <div class="meal-stat-label">{{ meal.name }}</div>
+              </div>
+            </div>
+          }
+        </div>
+        @if (totalMeals() > 0) {
+          <div class="mt-5 pt-4 border-t border-border-light flex items-center justify-between">
+            <span class="text-sm text-text-muted font-medium">Total registrado</span>
+            <p-tag 
+              [value]="totalMeals() + ' comidas'"
+              severity="info"
+              icon="pi pi-check-circle"
+            />
+          </div>
+        }
+      </p-card>
+
+      <p-card styleClass="section-card">
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <div class="card-header-icon" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+              <i class="pi pi-directions-run" style="color: #16a34a;"></i>
+            </div>
+            <div>
+              <span class="font-bold text-base text-text">Actividad semanal</span>
+              <p class="text-xs text-text-muted mt-0.5">Distribución de tipos de actividad</p>
+            </div>
+          </div>
+        </ng-template>
+        @if (activityStats().length > 0) {
+          <div class="space-y-5">
+            @for (activity of activityStats(); track activity.name) {
+              <div class="activity-row">
+                <div class="activity-icon" [style.background]="activity.color + '20'">
+                  <i [class]="'pi ' + activity.icon" [style.color]="activity.color"></i>
                 </div>
-                <div class="meal-stat-content">
-                  <div class="meal-stat-value">{{ meal.count }}</div>
-                  <div class="meal-stat-label">{{ meal.name }}</div>
+                <div class="activity-content">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold text-sm text-text">{{ activity.name }}</span>
+                    <p-badge 
+                      [value]="activity.count + ' días'" 
+                      [severity]="getActivitySeverity(activity.color)"
+                      styleClass="activity-badge"
+                    />
+                  </div>
+                  <p-progressbar 
+                    [value]="activity.percentage" 
+                    [showValue]="false"
+                    [style]="{'height': '10px'}"
+                    styleClass="activity-progress"
+                  />
                 </div>
               </div>
             }
           </div>
-          @if (totalMeals() > 0) {
-            <div class="mt-4 pt-4 border-t border-border-light flex items-center justify-between">
-              <span class="text-sm text-text-muted font-medium">Total registrado</span>
-              <span class="section-badge">
-                <i class="pi pi-check-circle"></i>
-                {{ totalMeals() }} comidas
-              </span>
+        } @else {
+          <div class="empty-state py-8">
+            <div class="empty-state-icon-wrapper">
+              <i class="pi pi-chart-bar empty-state-icon"></i>
             </div>
-          }
-        </p-card>
+            <p class="empty-state-text">Registra tu actividad para ver estadísticas</p>
+          </div>
+        }
+      </p-card>
 
-        <p-card>
+      @if (latestWeekly()) {
+        <p-card styleClass="summary-card">
           <ng-template pTemplate="header">
-            <div class="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-bg-warm/50 to-transparent">
-              <div class="card-header-icon" style="background: linear-gradient(135deg, var(--color-secondary-light) 0%, #c7d2fe 100%);">
-                <i class="pi pi-bolt" style="color: var(--color-secondary);"></i>
+            <div class="card-header">
+              <div class="card-header-icon" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+                <i class="pi pi-sliders-h" style="color: #2563eb;"></i>
               </div>
               <div>
-                <span class="font-bold text-sm text-text">Actividad semanal</span>
-                <p class="text-xs text-text-muted mt-0.5">Distribución de tipos de actividad</p>
+                <span class="font-bold text-base text-text">Últimas medidas</span>
+                <p class="text-xs text-text-muted mt-0.5">Datos de la semana más reciente</p>
               </div>
             </div>
           </ng-template>
-          @if (activityStats().length > 0) {
-            <div class="space-y-4">
-              @for (activity of activityStats(); track activity.name) {
-                <div class="activity-row">
-                  <div class="activity-icon" [style.background]="activity.color + '20'">
-                    <i [class]="'pi ' + activity.icon" [style.color]="activity.color"></i>
-                  </div>
-                  <div class="activity-content">
-                    <div class="flex justify-between items-center mb-2">
-                      <span class="font-semibold text-sm text-text">{{ activity.name }}</span>
-                      <span class="text-sm font-bold" [style.color]="activity.color">{{ activity.count }} días</span>
-                    </div>
-                    <div class="activity-bar">
-                      <p-progressbar [value]="activity.percentage" [showValue]="false" [style]="{'height': '8px'}"></p-progressbar>
-                    </div>
-                  </div>
-                </div>
-              }
+          <div class="grid grid-cols-3 gap-4">
+            <div class="metric-card">
+              <div class="metric-value">{{ latestWeekly()!.weightKg || '--' }}</div>
+              <div class="metric-label">kg</div>
             </div>
-          } @else {
-            <div class="empty-state py-8">
-              <div class="empty-state-icon-wrapper">
-                <i class="pi pi-chart-bar empty-state-icon"></i>
-              </div>
-              <p class="empty-state-text">Registra tu actividad para ver estadísticas</p>
+            <div class="metric-card">
+              <div class="metric-value">{{ latestWeekly()!.waistCm || '--' }}</div>
+              <div class="metric-label">cintura</div>
             </div>
-          }
+            <div class="metric-card">
+              <div class="metric-value">{{ latestWeekly()!.armCm || '--' }}</div>
+              <div class="metric-label">brazo</div>
+            </div>
+          </div>
         </p-card>
-
-        @if (latestWeekly()) {
-          <p-card styleClass="card-elevated">
-            <ng-template pTemplate="header">
-              <div class="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-primary-light/30 to-transparent">
-                <div class="card-header-icon" style="background: linear-gradient(135deg, var(--color-primary-light) 0%, white 100%);">
-                  <i class="pi pi-sliders-h" style="color: var(--color-primary);"></i>
-                </div>
-                <div>
-                  <span class="font-bold text-sm text-text">Últimas medidas</span>
-                  <p class="text-xs text-text-muted mt-0.5">Datos de la semana más reciente</p>
-                </div>
-              </div>
-            </ng-template>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="metric-card">
-                <div class="metric-value">{{ latestWeekly()!.weightKg || '--' }}</div>
-                <div class="metric-label">kg</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-value">{{ latestWeekly()!.waistCm || '--' }}</div>
-                <div class="metric-label">cintura</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-value">{{ latestWeekly()!.armCm || '--' }}</div>
-                <div class="metric-label">brazo</div>
-              </div>
-            </div>
-          </p-card>
-        }
-      </div>
+      }
     </div>
   `,
   styles: [`
@@ -174,49 +182,67 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
       display: block;
     }
 
-    .weight-change-badge {
+    .section-card {
+      margin-bottom: 16px;
+    }
+
+    .summary-card {
+      background: linear-gradient(135deg, var(--color-primary-light) 0%, white 100%) !important;
+      border: 1px solid rgba(13, 148, 136, 0.2) !important;
+    }
+
+    .card-header {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 700;
+      justify-content: space-between;
+      padding: 4px 0;
     }
 
-    .weight-change-badge.positive {
-      background: var(--color-primary-light);
-      color: var(--color-primary-dark);
+    .card-header-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(204, 251, 241, 0.5) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
     }
 
-    .weight-change-badge.negative {
-      background: #fee2e2;
-      color: #dc2626;
+    .card-header-icon i {
+      font-size: 18px;
+      color: var(--color-primary);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 220px;
+      width: 100%;
     }
 
     .meal-stat-card {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 14px;
+      gap: 14px;
+      padding: 16px;
       background: linear-gradient(135deg, white 0%, var(--color-bg-warm) 100%);
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid var(--color-border-light);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     .meal-stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
     }
 
     .meal-stat-icon i {
-      font-size: 18px;
+      font-size: 20px;
       color: white;
     }
 
@@ -225,28 +251,28 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .meal-stat-value {
-      font-size: 22px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--color-text);
-      line-height: 1.2;
+      line-height: 1.1;
     }
 
     .meal-stat-label {
       font-size: 12px;
       font-weight: 600;
       color: var(--color-text-muted);
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .activity-row {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 14px;
     }
 
     .activity-icon {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -255,7 +281,7 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .activity-icon i {
-      font-size: 16px;
+      font-size: 18px;
     }
 
     .activity-content {
@@ -263,17 +289,13 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
       padding-top: 4px;
     }
 
-    .activity-bar {
-      height: 8px;
-      background: var(--color-bg-warm);
-      border-radius: 4px;
-      overflow: hidden;
+    :host ::ng-deep .activity-badge .p-badge {
+      font-size: 11px;
+      font-weight: 600;
     }
 
-    .chart-container {
-      position: relative;
-      height: 200px;
-      width: 100%;
+    :host ::ng-deep .activity-progress {
+      height: 10px !important;
     }
   `]
 })
@@ -468,5 +490,15 @@ export class ProgressComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  getActivitySeverity(color: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | undefined {
+    switch (color) {
+      case '#10b981': return 'success';
+      case '#f59e0b': return 'warn';
+      case '#6366f1': return 'info';
+      case '#dc2626': return 'danger';
+      default: return 'secondary';
+    }
   }
 }
