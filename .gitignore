@@ -1,4 +1,4 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more information.
 
 # Compiled output
 /dist
@@ -7,9 +7,10 @@
 /bazel-out
 
 # Node
-/node_modules
+**/node_modules
 npm-debug.log
 yarn-error.log
+pnpm-debug.log
 
 # IDEs and editors
 .idea/
@@ -42,3 +43,10 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# SQLite
+**/*.db
+**/*.db-journal
+
+# Environment files (contain secrets)
+.env

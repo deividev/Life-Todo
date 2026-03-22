@@ -1,94 +1,114 @@
 # Life-Todo Health Tracker
 
-App de seguimiento de salud personal con Angular, Supabase y Tailwind CSS.
+App de seguimiento de salud personal con Angular, NestJS y Tailwind CSS.
 
 ## Características
 
 - **Today**: Registro diario de comidas, actividad, energía y apetito
 - **Weekly**: Seguimiento semanal de peso y medidas
 - **Progress**: Gráficas y estadísticas de progreso
-- **Auth**: Magic link con Supabase
 
 ## Stack Técnico
 
-- Angular 19+ (standalone components, signals)
-- TypeScript strict mode
-- Tailwind CSS 4 (mobile-first)
-- Supabase (Auth + PostgreSQL)
-- Chart.js para gráficos
-
-## Setup Local
-
-### 1. Requisitos
-
-- Node.js 18+
-- pnpm
-- Cuenta de Supabase
-
-### 2. Configurar Supabase
-
-1. Crear proyecto en [Supabase](https://supabase.com)
-2. Ejecutar `supabase-schema.sql` en el SQL Editor
-3. Configurar autenticación:
-   - Ir a Authentication > Providers > Email
-   - Habilitar "Secure email link"
-   - Configurar Site URL
-
-### 3. Variables de Entorno
-
-```bash
-cp .env.example .env
-```
-
-Editar `.env` con tus credenciales de Supabase:
-```
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 4. Instalar y Ejecutar
-
-```bash
-pnpm install
-pnpm dev
-```
-
-## Deployment
-
-### Build
-
-```bash
-pnpm build
-```
-
-Los archivos están en `dist/health-tracker/`.
-
-### Vercel / Netlify
-
-1. Configurar variables de entorno en el dashboard
-2. Deploy del directorio `dist/health-tracker/browser`
+- **Frontend**: Angular 19+ (standalone components, signals), Tailwind CSS 4
+- **Backend**: NestJS con TypeScript
+- **Base de datos**: SQLite con Prisma ORM
+- **Gráficas**: Chart.js
+- **Mobile-first**
 
 ## Estructura del Proyecto
 
 ```
-src/app/
-├── core/
-│   ├── services/     # Supabase, Auth, Daily/Weekly log services
-│   ├── guards/        # Auth guard
-│   └── models/        # TypeScript interfaces
-├── features/
-│   ├── login/        # Magic link login
-│   ├── today/        # Daily log view
-│   ├── weekly/       # Weekly log view
-│   └── progress/     # Charts and stats
-└── shared/
-    ├── components/   # Shared UI components
-    └── utils/        # Timezone utilities
+Life-Todo/
+├── frontend/          # Angular app
+│   ├── src/
+│   │   └── app/
+│   │       ├── core/services/   # HTTP services
+│   │       ├── features/         # Today, Weekly, Progress
+│   │       └── shared/           # Utils, components
+│   └── package.json
+├── backend/           # NestJS API
+│   ├── src/
+│   │   ├── daily-logs/
+│   │   ├── weekly-logs/
+│   │   └── progress/
+│   ├── prisma/
+│   └── package.json
+├── docs/              # Documentación
+└── README.md
 ```
+
+## Setup Local
+
+### Requisitos
+
+- Node.js 18+
+- pnpm
+
+### Backend
+
+```bash
+cd backend
+pnpm install
+pnpm db:push          # Crea la base de datos SQLite
+pnpm start:dev        # Inicia en http://localhost:3000
+```
+
+### Frontend
+
+```bash
+cd frontend
+pnpm install
+pnpm start             # Inicia en http://localhost:4200
+```
+
+### Variables de Entorno
+
+**Backend** (`backend/.env`):
+```
+DATABASE_URL="file:./dev.db"
+PORT=3000
+```
+
+**Frontend** (`frontend/src/environments/environment.ts`):
+```typescript
+export const environment = {
+  production: false,
+  apiBaseUrl: 'http://localhost:3000'
+};
+```
+
+## API Endpoints
+
+### Daily Logs
+- `GET /daily-logs/:date` - Obtener registro del día
+- `PUT /daily-logs/:date` - Crear/actualizar registro del día
+
+### Weekly Logs
+- `GET /weekly-logs/:weekStart` - Obtener registro semanal
+- `PUT /weekly-logs/:weekStart` - Crear/actualizar registro semanal
+
+### Progress
+- `GET /progress/summary` - Resumen con estadísticas
 
 ## Zona Horaria
 
 Todo funciona con timezone Europe/Madrid. Las semanas empiezan en Lunes.
+
+## Scripts
+
+```bash
+# Backend
+cd backend
+pnpm db:push           # Sincroniza schema con SQLite
+pnpm db:generate       # Genera cliente Prisma
+pnpm build             # Build de producción
+pnpm start:prod        # Inicia producción
+
+# Frontend
+cd frontend
+pnpm build             # Build de producción
+```
 
 ## Licencia
 
