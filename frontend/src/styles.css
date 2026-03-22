@@ -209,21 +209,23 @@ html {
   }
 
   .nav-item {
-    @apply flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all duration-200 cursor-pointer;
-    min-width: 56px;
+    @apply flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200 cursor-pointer;
+    min-width: 64px;
     color: var(--color-text-muted);
   }
 
   @media (min-width: 640px) {
     .nav-item {
-      @apply px-3 py-2 rounded-xl;
-      min-width: 64px;
+      @apply px-4 py-2.5 rounded-xl;
+      min-width: 72px;
     }
   }
 
-  .nav-item:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-text-secondary);
+  @media (hover: hover) {
+    .nav-item:hover {
+      background: var(--color-surface-hover);
+      color: var(--color-text-secondary);
+    }
   }
 
   .nav-item-active {
@@ -231,13 +233,15 @@ html {
     background: var(--color-primary-light);
   }
 
-  .nav-item-active:hover {
-    color: var(--color-primary-dark);
-    background: var(--color-primary-light);
+  @media (hover: hover) {
+    .nav-item-active:hover {
+      color: var(--color-primary-dark);
+      background: var(--color-primary-light);
+    }
   }
 
   .nav-item-label {
-    @apply text-[10px] sm:text-xs font-semibold;
+    @apply text-xs sm:text-sm font-semibold;
   }
 
   .nav-item-icon {
@@ -245,15 +249,15 @@ html {
   }
 
   .page-header {
-    @apply mb-3 sm:mb-4 flex items-start justify-between;
+    @apply mb-4 sm:mb-5 flex items-start justify-between;
   }
 
   .page-title {
-    @apply text-lg sm:text-xl font-bold text-slate-900 tracking-tight;
+    @apply text-xl sm:text-2xl font-bold text-slate-900 tracking-tight;
   }
 
   .page-subtitle {
-    @apply text-xs text-slate-500 mt-0.5 font-medium;
+    @apply text-sm text-slate-500 mt-1 font-medium;
   }
 
   .section-divider {
@@ -298,11 +302,11 @@ html {
   }
 
   .p-card-title {
-    @apply text-sm font-bold text-slate-900 m-0 flex items-center gap-2.5;
+    @apply text-sm sm:text-base font-bold text-slate-900 m-0 flex items-center gap-2.5;
   }
 
   .p-card-subtitle {
-    @apply text-[10px] text-slate-500 m-0 mt-0.5;
+    @apply text-xs sm:text-sm text-slate-500 m-0 mt-0.5;
   }
 
   .p-button {
@@ -419,8 +423,14 @@ html {
   }
 
   .p-progressbar {
-    @apply h-3 rounded-full bg-slate-100;
+    @apply h-2.5 rounded-full bg-slate-100;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  @media (min-width: 640px) {
+    .p-progressbar {
+      @apply h-3 rounded-full;
+    }
   }
 
   .p-progressbar .p-progressbar-value {
@@ -555,14 +565,26 @@ html {
   }
 
   .card-header-icon {
-    @apply w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0;
+    @apply w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0;
     background: linear-gradient(135deg, var(--color-primary-light) 0%, #99f6e4 100%);
-    box-shadow: 0 1px 3px rgba(13, 148, 136, 0.15);
+    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.15);
+  }
+
+  @media (min-width: 640px) {
+    .card-header-icon {
+      @apply w-11 h-11;
+    }
   }
 
   .card-header-icon i {
-    @apply text-base;
+    @apply text-lg;
     color: var(--color-primary);
+  }
+
+  @media (min-width: 640px) {
+    .card-header-icon i {
+      @apply text-xl;
+    }
   }
 
   .card-header-icon-success {
@@ -599,27 +621,26 @@ html {
 
   .metric-card {
     @apply bg-white rounded-xl p-3 text-center border border-slate-200;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
 
   @media (min-width: 640px) {
     .metric-card {
-      @apply p-3.5 rounded-xl;
+      @apply p-4 rounded-xl;
     }
   }
 
   .metric-value {
-    @apply text-lg sm:text-xl font-bold text-slate-900 tracking-tight;
+    @apply text-xl sm:text-2xl font-bold text-slate-900 tracking-tight;
   }
 
   .metric-label {
-    @apply text-[10px] text-slate-500 mt-0.5 font-semibold uppercase tracking-wide;
+    @apply text-xs text-slate-500 mt-1 font-semibold uppercase tracking-wide;
   }
 
   .stat-card {
     @apply bg-white rounded-xl p-3 border border-slate-200;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
 
   @media (min-width: 640px) {
@@ -628,51 +649,53 @@ html {
     }
   }
 
-  .stat-card:hover {
-    @apply border-teal-200;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  @media (hover: hover) {
+    .stat-card:hover {
+      @apply border-teal-200;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
   }
 
   .stat-icon-wrapper {
-    @apply w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1.5;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    @apply w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
   }
 
   @media (min-width: 640px) {
     .stat-icon-wrapper {
-      @apply mb-2;
+      @apply mb-2.5;
     }
   }
 
   .stat-value {
-    @apply text-xl sm:text-2xl font-bold text-slate-900 tracking-tight leading-none;
+    @apply text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-none;
   }
 
   .stat-label {
-    @apply text-[10px] sm:text-xs text-slate-500 mt-0.5 font-medium;
+    @apply text-xs sm:text-sm text-slate-500 mt-1 font-medium;
   }
 
   .empty-state {
-    @apply flex flex-col items-center justify-center py-6 sm:py-8 text-center;
+    @apply flex flex-col items-center justify-center py-8 sm:py-10 text-center;
   }
 
   .empty-state-icon-wrapper {
-    @apply w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center mb-3;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    @apply w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center mb-4;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
   }
 
   @media (min-width: 640px) {
     .empty-state-icon-wrapper {
-      @apply mb-3;
+      @apply mb-4;
     }
   }
 
   .empty-state-icon {
-    @apply text-lg sm:text-xl text-slate-400;
+    @apply text-2xl sm:text-3xl text-slate-400;
   }
 
   .empty-state-text {
-    @apply text-slate-500 text-xs leading-relaxed max-w-[200px] font-medium;
+    @apply text-slate-500 text-sm leading-relaxed max-w-[220px] font-medium;
   }
 
   .accent-card {
@@ -687,13 +710,13 @@ html {
   }
 
   .summary-hero {
-    @apply bg-gradient-to-br from-teal-600 via-teal-500 to-emerald-500 rounded-xl p-3.5 sm:p-4 mb-3 sm:mb-4 text-white;
+    @apply bg-gradient-to-br from-teal-600 via-teal-500 to-emerald-500 rounded-xl p-4 sm:p-5 mb-4 text-white;
     box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
   }
 
   @media (min-width: 640px) {
     .summary-hero {
-      @apply rounded-xl;
+      @apply rounded-xl p-5;
     }
   }
 
@@ -703,20 +726,20 @@ html {
   }
 
   .chip-meal {
-    @apply inline-flex items-center justify-center w-8 h-8 rounded-lg;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    @apply inline-flex items-center justify-center w-9 h-9 rounded-xl;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   }
 
   .chip-meal i {
-    @apply text-sm;
+    @apply text-base;
   }
 
   @media (min-width: 640px) {
     .chip-meal {
-      @apply w-9 h-9 rounded-xl;
+      @apply w-10 h-10 rounded-xl;
     }
     .chip-meal i {
-      @apply text-base;
+      @apply text-lg;
     }
   }
 
@@ -739,8 +762,8 @@ html {
   :host ::ng-deep .p-button.meal-btn,
   :host ::ng-deep .p-button.activity-btn {
     @apply flex flex-col items-center justify-center;
-    @apply py-3 px-1 sm:py-4 sm:px-2;
-    min-height: 72px;
+    @apply py-3 px-2 sm:py-4 sm:px-3;
+    min-height: 76px;
     width: 100%;
   }
 
@@ -748,17 +771,18 @@ html {
     :host ::ng-deep .p-button.meal-btn,
     :host ::ng-deep .p-button.activity-btn {
       min-height: 88px;
+      @apply py-4 px-3;
     }
   }
 
   :host ::ng-deep .p-button.meal-btn .p-button-label,
   :host ::ng-deep .p-button.activity-btn .p-button-label {
-    @apply text-[10px] sm:text-xs font-semibold mt-1 sm:mt-2;
+    @apply text-xs sm:text-sm font-semibold mt-1.5;
   }
 
   :host ::ng-deep .p-button.meal-btn .p-button-icon,
   :host ::ng-deep .p-button.activity-btn .p-button-icon {
-    @apply text-lg sm:text-xl;
+    @apply text-xl sm:text-2xl;
   }
 
   :host ::ng-deep .p-button.feeling-btn {
@@ -784,13 +808,25 @@ html {
 
   :host ::ng-deep .p-selectbutton {
     @apply w-full flex;
+    gap: 4px;
   }
 
   :host ::ng-deep .p-selectbutton .p-button {
-    @apply flex-1 justify-center py-2.5 px-2 sm:py-3.5 sm:px-4;
+    @apply flex-1 justify-center py-3 px-2 sm:py-4 sm:px-4 rounded-xl;
+    font-size: 0.8125rem;
+  }
+
+  @media (min-width: 640px) {
+    :host ::ng-deep .p-selectbutton .p-button {
+      font-size: 0.9375rem;
+    }
   }
 
   :host ::ng-deep .p-selectbutton .p-button .p-button-label {
     @apply font-semibold text-xs sm:text-sm;
+  }
+
+  :host ::ng-deep .p-selectbutton .p-button.p-highlight {
+    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
   }
 }

@@ -200,19 +200,19 @@ interface ActivityOption {
     }
 
     .section-card {
-      @apply mb-3;
+      @apply mb-4;
     }
 
     .card-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .hero-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
@@ -223,20 +223,20 @@ interface ActivityOption {
 
     @media (min-width: 640px) {
       .hero-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
       }
     }
 
     .hero-icon i {
-      font-size: 18px;
+      font-size: 20px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .hero-icon i {
-        font-size: 22px;
+        font-size: 24px;
       }
     }
 
@@ -254,15 +254,15 @@ interface ActivityOption {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 8px 4px !important;
-      min-height: 64px;
+      padding: 10px 6px !important;
+      min-height: 72px;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .meal-btn[data-active="true"],
       :host ::ng-deep .activity-btn {
-        padding: 10px 6px !important;
-        min-height: 72px;
+        padding: 12px 8px !important;
+        min-height: 84px;
       }
     }
 
@@ -275,35 +275,36 @@ interface ActivityOption {
 
     :host ::ng-deep .meal-btn .p-button-label,
     :host ::ng-deep .activity-btn .p-button-label {
-      @apply text-[10px] sm:text-xs font-semibold mt-1;
+      @apply text-xs sm:text-sm font-semibold mt-1.5;
     }
 
     :host ::ng-deep .meal-btn .p-button-icon,
     :host ::ng-deep .activity-btn .p-button-icon {
-      @apply text-base sm:text-lg;
+      @apply text-xl sm:text-2xl;
     }
 
     :host ::ng-deep .energy-selector .p-selectbutton,
     :host ::ng-deep .appetite-selector .p-selectbutton {
       display: flex;
       width: 100%;
+      gap: 4px;
     }
 
     :host ::ng-deep .energy-selector .p-button,
     :host ::ng-deep .appetite-selector .p-button {
       flex: 1;
       justify-content: center;
-      padding: 8px 6px;
-      border-radius: 10px;
-      font-size: 0.75rem;
+      padding: 10px 6px;
+      border-radius: 12px;
+      font-size: 0.8125rem;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .energy-selector .p-button,
       :host ::ng-deep .appetite-selector .p-button {
-        padding: 10px 12px;
-        border-radius: 12px;
-        font-size: 0.875rem;
+        padding: 12px 16px;
+        border-radius: 14px;
+        font-size: 0.9375rem;
       }
     }
 

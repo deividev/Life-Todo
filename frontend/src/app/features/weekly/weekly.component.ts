@@ -209,7 +209,7 @@ interface MeasureInput {
     }
 
     .section-card {
-      @apply mb-3;
+      @apply mb-4;
     }
 
     .summary-card {
@@ -219,13 +219,13 @@ interface MeasureInput {
     .card-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .hero-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
@@ -236,20 +236,20 @@ interface MeasureInput {
 
     @media (min-width: 640px) {
       .hero-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
       }
     }
 
     .hero-icon i {
-      font-size: 18px;
+      font-size: 20px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .hero-icon i {
-        font-size: 22px;
+        font-size: 24px;
       }
     }
 
@@ -289,23 +289,23 @@ interface MeasureInput {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 10px 6px;
-      min-height: 64px;
+      padding: 12px 8px;
+      min-height: 80px;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .feeling-btn {
-        padding: 12px 8px;
-        min-height: 72px;
+        padding: 14px 10px;
+        min-height: 96px;
       }
     }
 
     :host ::ng-deep .feeling-btn .p-button-label {
-      @apply text-[10px] sm:text-xs font-semibold mt-1;
+      @apply text-xs sm:text-sm font-semibold mt-2;
     }
 
     :host ::ng-deep .feeling-btn .p-button-icon {
-      @apply text-lg sm:text-xl;
+      @apply text-2xl sm:text-3xl;
     }
 
     :host ::ng-deep .feeling-btn.p-button-warn {

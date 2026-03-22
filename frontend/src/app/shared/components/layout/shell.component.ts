@@ -89,8 +89,8 @@ interface NavItem {
     }
 
     .header-logo {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(10px);
@@ -98,26 +98,26 @@ interface NavItem {
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       flex-shrink: 0;
     }
 
     @media (min-width: 640px) {
       .header-logo {
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         border-radius: 14px;
       }
     }
 
     .header-logo i {
-      font-size: 18px;
+      font-size: 20px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .header-logo i {
-        font-size: 22px;
+        font-size: 24px;
       }
     }
 
@@ -130,22 +130,22 @@ interface NavItem {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      padding: 6px 12px;
+      padding: 8px 14px;
       background: rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
+      border-radius: 12px;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     @media (min-width: 640px) {
       .header-date {
-        padding: 8px 16px;
-        border-radius: 12px;
+        padding: 10px 18px;
+        border-radius: 14px;
       }
     }
 
     .date-day {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       color: white;
       line-height: 1;
@@ -153,28 +153,28 @@ interface NavItem {
 
     @media (min-width: 640px) {
       .date-day {
-        font-size: 20px;
+        font-size: 22px;
       }
     }
 
     .date-month {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 500;
       color: rgba(255, 255, 255, 0.85);
       text-transform: capitalize;
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     @media (min-width: 640px) {
       .date-month {
-        font-size: 11px;
+        font-size: 12px;
       }
     }
 
     .nav-icon-wrapper {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -184,14 +184,16 @@ interface NavItem {
 
     @media (min-width: 640px) {
       .nav-icon-wrapper {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
       }
     }
 
-    .nav-item:hover .nav-icon-wrapper {
-      transform: scale(1.05);
+    @media (hover: hover) {
+      .nav-item:hover .nav-icon-wrapper {
+        transform: scale(1.05);
+      }
     }
 
     .nav-item-active .nav-icon-wrapper {
@@ -205,23 +207,23 @@ interface NavItem {
 
     .nav-item-icon {
       color: var(--color-text-muted);
-      font-size: 1rem;
+      font-size: 1.125rem;
     }
 
     @media (min-width: 640px) {
       .nav-item-icon {
-        font-size: 1.25rem;
+        font-size: 1.375rem;
       }
     }
 
     .nav-item i {
       color: var(--color-text-muted);
-      font-size: 1rem;
+      font-size: 1.125rem;
     }
 
     @media (min-width: 640px) {
       .nav-item i {
-        font-size: 1.25rem;
+        font-size: 1.375rem;
       }
     }
   `]

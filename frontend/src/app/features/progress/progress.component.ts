@@ -181,13 +181,13 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .section-card {
-      @apply mb-3;
+      @apply mb-4;
     }
 
     .hero-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
@@ -198,20 +198,20 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
 
     @media (min-width: 640px) {
       .hero-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
       }
     }
 
     .hero-icon i {
-      font-size: 18px;
+      font-size: 20px;
       color: white;
     }
 
     @media (min-width: 640px) {
       .hero-icon i {
-        font-size: 22px;
+        font-size: 24px;
       }
     }
 
@@ -257,115 +257,116 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .chart-card {
-      @apply bg-white rounded-xl p-3 border border-slate-200;
+      @apply bg-white rounded-xl p-4 border border-slate-200;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     @media (min-width: 640px) {
       .chart-card {
-        @apply p-4 rounded-xl;
+        @apply p-5 rounded-xl;
       }
     }
 
     .chart-card canvas {
-      height: 160px !important;
+      height: 180px !important;
     }
 
     @media (min-width: 640px) {
       .chart-card canvas {
-        height: 180px !important;
+        height: 200px !important;
       }
     }
 
     .card-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .stat-card {
-      @apply bg-white rounded-xl p-3 border border-slate-200 text-center;
+      @apply bg-white rounded-xl p-4 text-center border border-slate-200;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: all 0.2s ease;
     }
 
     @media (min-width: 640px) {
       .stat-card {
-        @apply p-3.5 rounded-xl;
+        @apply p-4 rounded-xl;
       }
     }
 
-    .stat-card:hover {
-      @apply border-teal-200;
-      transform: translateY(-2px);
+    @media (hover: hover) {
+      .stat-card:hover {
+        @apply border-teal-200;
+        transform: translateY(-2px);
+      }
     }
 
     .stat-icon-wrapper {
-      @apply w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mx-auto mb-1.5;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      @apply w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
     }
 
     @media (min-width: 640px) {
       .stat-icon-wrapper {
-        @apply mb-2;
+        @apply mb-2.5;
       }
     }
 
     .stat-icon-wrapper i {
-      @apply text-sm sm:text-base;
+      @apply text-lg sm:text-xl;
     }
 
     .progress-section {
-      @apply space-y-3;
+      @apply space-y-4;
     }
 
     .progress-row {
-      @apply flex items-start gap-2.5;
+      @apply flex items-start gap-3;
     }
 
     .progress-icon {
-      @apply w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0;
+      @apply w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0;
     }
 
     .progress-icon i {
-      @apply text-sm sm:text-base;
+      @apply text-lg sm:text-xl;
     }
 
     .progress-content {
-      @apply flex-1 pt-0.5;
+      @apply flex-1 pt-1;
     }
 
     .metric-card {
-      @apply bg-white rounded-xl p-3 text-center border border-slate-200;
+      @apply bg-white rounded-xl p-4 text-center border border-slate-200;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     @media (min-width: 640px) {
       .metric-card {
-        @apply p-3.5 rounded-xl;
+        @apply p-5 rounded-xl;
       }
     }
 
     .metric-icon {
-      @apply w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mx-auto mb-1;
+      @apply w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2;
     }
 
     @media (min-width: 640px) {
       .metric-icon {
-        @apply mb-1.5;
+        @apply mb-2.5;
       }
     }
 
     .metric-icon i {
-      @apply text-sm sm:text-base;
+      @apply text-lg sm:text-xl;
     }
 
     .metric-value {
-      @apply text-lg sm:text-xl font-bold text-slate-900 tracking-tight;
+      @apply text-xl sm:text-2xl font-bold text-slate-900 tracking-tight;
     }
 
     .metric-label {
-      @apply text-[10px] text-slate-500 font-semibold uppercase tracking-wide;
+      @apply text-xs text-slate-500 font-semibold uppercase tracking-wide;
     }
   `]
 })
