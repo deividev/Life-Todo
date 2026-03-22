@@ -4,19 +4,14 @@
 Mobile-first web app for daily health tracking with focus on nutrition, activity, and progress visualization.
 
 ## Tech Stack
-- **Frontend**: Angular 19+ with TypeScript
-- **Styling**: Tailwind CSS 4 (mobile-first)
-- **Backend**: Supabase (Auth + PostgreSQL)
-- **Charts**: Chart.js
-- **PWA**: Lightweight service worker
+- **Frontend**: Next.js 16 with React 19 + TypeScript
+- **Styling**: Tailwind CSS 4
+- **Icons**: Lucide React
+- **Charts**: Recharts
+- **Backend**: NestJS + Prisma + SQLite (puerto 3000)
+- **HTTP**: Next.js proxy para evitar CORS
 
 ## Features
-
-### Authentication
-- Supabase Auth with Magic Link
-- Email-based login
-- Persistent session
-- Protected routes
 
 ### Today Tab (Default View)
 Quick daily health log:
@@ -36,98 +31,119 @@ Weekly measurements and summary:
 - **Arm (cm)**: Number input
 - **Weekly feeling**: worse | same | better
 - **Note**: Free text
-- Unique per user+week_start
+- Unique per week_start
 
 ### Progress Tab
 Visual analytics:
-- **Weight chart**: Line chart of weekly weights
+- **Weight chart**: Line chart of weekly weights (Recharts)
 - **Meals summary**: Count of meal days logged
-- **Activity overview**: Weekly activity distribution
+- **Latest measures**: Most recent body measurements
 
-## Data Model
+## Data Model (Prisma Schema)
 
-### daily_logs
-```sql
-id uuid PRIMARY KEY DEFAULT gen_random_uuid()
-user_id uuid REFERENCES auth.users NOT NULL
-date date NOT NULL
-breakfast boolean DEFAULT false
-lunch boolean DEFAULT false
-snack boolean DEFAULT false
-dinner boolean DEFAULT false
-activity_type text CHECK (activity_type IN ('none','walk','exercise','walk_and_exercise'))
-energy text CHECK (energy IN ('low','medium','high'))
-appetite text CHECK (appetite IN ('low','normal','high'))
-note text
-created_at timestamptz DEFAULT now()
-updated_at timestamptz DEFAULT now()
-UNIQUE(user_id, date)
+### DailyLog
+```prisma
+model DailyLog {
+  id           String   @id @default(uuid())
+  date         String   @unique
+  breakfast    Boolean  @default(false)
+  lunch        Boolean  @default(false)
+  snack        Boolean  @default(false)
+  dinner       Boolean  @default(false)
+  activityType String   @default("none")
+  energy       String   @default("medium")
+  appetite     String   @default("normal")
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
 ```
 
-### weekly_logs
-```sql
-id uuid PRIMARY KEY DEFAULT gen_random_uuid()
-user_id uuid REFERENCES auth.users NOT NULL
-week_start date NOT NULL
-weight_kg decimal(5,2)
-waist_cm decimal(5,1)
-arm_cm decimal(5,1)
-weekly_feeling text CHECK (weekly_feeling IN ('worse','same','better'))
-note text
-created_at timestamptz DEFAULT now()
-updated_at timestamptz DEFAULT now()
-UNIQUE(user_id, week_start)
+### WeeklyLog
+```prisma
+model WeeklyLog {
+  id            String   @id @default(uuid())
+  weekStart     String   @unique
+  weightKg      Float?
+  waistCm       Float?
+  armCm         Float?
+  weeklyFeeling String?
+  note          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
 ```
 
-### RLS Policies
-- Users can only read/write their own data
-- Auth required for all operations
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /daily-logs/:date | Get daily log |
+| PUT | /daily-logs/:date | Create/update daily log |
+| GET | /weekly-logs/:weekStart | Get weekly log |
+| PUT | /weekly-logs/:weekStart | Create/update weekly log |
+| GET | /progress/summary | Get progress summary |
 
 ## Timezone
 - All dates in Europe/Madrid (CET/CEST)
 - Week starts Monday
 - Daily logs use calendar date in Madrid timezone
 
-## Environment Variables
+## Frontend File Structure
 ```
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+frontend/
+├── app/
+│   ├── layout.tsx        # Root layout with AppShell
+│   ├── page.tsx          # Today view (home)
+│   ├── weekly/page.tsx   # Weekly view
+│   ├── progress/page.tsx # Progress view
+│   └── globals.css       # Tailwind + theme
+├── components/
+│   ├── shell/            # Sidebar, BottomNav, AppShell
+│   ├── today/            # Today components
+│   ├── weekly/           # Weekly components
+│   ├── progress/         # Progress components
+│   └── ui/               # Shared UI components
+├── lib/
+│   ├── api.ts             # API client
+│   ├── utils.ts          # Timezone utilities
+│   └── cn.ts             # Classname helper
+└── types/
+    └── index.ts           # TypeScript types
 ```
 
-## File Structure
+## Commands
+
+```bash
+# Frontend
+cd frontend
+pnpm install
+pnpm dev      # Development server (puerto 3001)
+pnpm build    # Production build
+pnpm start    # Production server
+
+# Backend
+cd backend
+pnpm install
+pnpm start:dev  # Development server (puerto 3000)
 ```
-src/
-├── app/
-│   ├── core/
-│   │   ├── services/
-│   │   │   ├── supabase.service.ts
-│   │   │   ├── auth.service.ts
-│   │   │   ├── daily-log.service.ts
-│   │   │   └── weekly-log.service.ts
-│   │   ├── guards/
-│   │   │   └── auth.guard.ts
-│   │   └── models/
-│   │       ├── daily-log.model.ts
-│   │       └── weekly-log.model.ts
-│   ├── features/
-│   │   ├── login/
-│   │   ├── today/
-│   │   ├── weekly/
-│   │   └── progress/
-│   ├── shared/
-│   │   ├── components/
-│   │   │   └── tabs/
-│   │   └── utils/
-│   │       └── timezone.ts
-│   └── app.routes.ts
-├── environments/
-│   ├── environment.ts
-│   └── environment.prod.ts
-└── styles.css
+
+## Environment Variables
+
+Frontend (`frontend/.env`):
+```
+NEXT_PUBLIC_API_URL=/api
+```
+
+Backend (`backend/.env`):
+```
+DATABASE_URL="file:./dev.db"
+PORT=3000
 ```
 
 ## TODO
-- [ ] Add PWA manifest
-- [ ] Add service worker
-- [ ] Add push notifications (future)
+- [ ] Authentication (future)
+- [ ] PWA manifest and service worker (future)
+- [ ] Push notifications (future)
 - [ ] Export data (future)
+- [ ] Tests (future)
