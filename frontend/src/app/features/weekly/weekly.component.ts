@@ -87,6 +87,7 @@ interface MeasureInput {
         </div>
       </div>
 
+      <!-- Desktop: Horizontal layout for measures -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         @for (measure of measureInputs; track measure.label) {
           <div class="measure-card">
@@ -135,72 +136,73 @@ interface MeasureInput {
         </div>
       </p-card>
 
-      <p-card styleClass="section-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <div class="card-header-icon card-header-icon-purple">
-              <i class="pi pi-pencil"></i>
-            </div>
-            <div>
-              <span class="font-bold text-sm sm:text-base text-slate-900">Nota semanal</span>
-              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu semana</p>
-            </div>
-          </div>
-        </ng-template>
-        <textarea 
-          pTextarea 
-          [(ngModel)]="note" 
-          (blur)="saveNote()" 
-          placeholder="¿Qué tal fue esta semana? Logros, retos, observaciones..."
-          [autoResize]="true" 
-          rows="4" 
-          class="w-full"
-        ></textarea>
-      </p-card>
-
-      @if (weeklyLog()?.weightKg || weeklyLog()?.waistCm || weeklyLog()?.armCm || weeklyLog()?.weeklyFeeling) {
-        <div class="section-divider"></div>
-        
-        <p-card styleClass="summary-card">
+      <!-- Desktop: Two column layout for notes and summary -->
+      <div class="lg:grid lg:grid-cols-2 lg:gap-6">
+        <p-card styleClass="section-card">
           <ng-template pTemplate="header">
             <div class="card-header">
-              <div class="card-header-icon">
-                <i class="pi pi-chart-bar"></i>
+              <div class="card-header-icon card-header-icon-purple">
+                <i class="pi pi-pencil"></i>
               </div>
               <div>
-                <span class="font-bold text-sm sm:text-base text-slate-900">Resumen de la semana</span>
-                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Datos registrados</p>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Nota semanal</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu semana</p>
               </div>
             </div>
           </ng-template>
-          <div class="grid grid-cols-3 gap-3 sm:gap-4">
-            <div class="metric-card">
-              <div class="metric-value">{{ weeklyLog()!.weightKg || '--' }}</div>
-              <div class="metric-label">kg</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-value">{{ weeklyLog()!.waistCm || '--' }}</div>
-              <div class="metric-label">cintura</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-value">{{ weeklyLog()!.armCm || '--' }}</div>
-              <div class="metric-label">brazo</div>
-            </div>
-          </div>
-          @if (weeklyLog()!.weeklyFeeling) {
-            <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100">
-              <div class="flex items-center justify-center gap-2">
-                <span class="text-xs sm:text-sm text-slate-500 font-medium">Sensación semanal:</span>
-                <p-tag 
-                  [value]="getFeelingLabel(weeklyLog()!.weeklyFeeling!)"
-                  [icon]="getFeelingIcon(weeklyLog()!.weeklyFeeling!)"
-                  [severity]="getFeelingSeverity(weeklyLog()!.weeklyFeeling!)"
-                />
+          <textarea 
+            pTextarea 
+            [(ngModel)]="note" 
+            (blur)="saveNote()" 
+            placeholder="¿Qué tal fue esta semana? Logros, retos, observaciones..."
+            [autoResize]="true" 
+            rows="4" 
+            class="w-full"
+          ></textarea>
+        </p-card>
+
+        @if (weeklyLog()?.weightKg || weeklyLog()?.waistCm || weeklyLog()?.armCm || weeklyLog()?.weeklyFeeling) {
+          <p-card styleClass="section-card">
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <div class="card-header-icon">
+                  <i class="pi pi-chart-bar"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-slate-900">Resumen de la semana</span>
+                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Datos registrados</p>
+                </div>
+              </div>
+            </ng-template>
+            <div class="grid grid-cols-3 gap-3 sm:gap-4">
+              <div class="metric-card">
+                <div class="metric-value">{{ weeklyLog()!.weightKg || '--' }}</div>
+                <div class="metric-label">kg</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">{{ weeklyLog()!.waistCm || '--' }}</div>
+                <div class="metric-label">cintura</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">{{ weeklyLog()!.armCm || '--' }}</div>
+                <div class="metric-label">brazo</div>
               </div>
             </div>
-          }
-        </p-card>
-      }
+            @if (weeklyLog()!.weeklyFeeling) {
+              <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100">
+                <div class="flex items-center justify-center gap-2">
+                  <span class="text-xs sm:text-sm text-slate-500 font-medium">Sensación semanal:</span>
+                  <p-tag 
+                    [value]="getFeelingLabel(weeklyLog()!.weeklyFeeling!)"
+                    [icon]="getFeelingIcon(weeklyLog()!.weeklyFeeling!)"
+                    [severity]="getFeelingSeverity(weeklyLog()!.weeklyFeeling!)"
+                  />
+                </div>
+              </div>
+            }
+          </p-card>
+        }
+      </div>
     </div>
   `,
   styles: [`
