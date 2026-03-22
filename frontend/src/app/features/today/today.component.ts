@@ -9,21 +9,21 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
   standalone: true,
   imports: [FormsModule],
   template: `
-    <div class="space-y-5">
-      <div class="flex items-center justify-between">
+    <div class="animate-fade-in space-y-5">
+      <div class="page-header flex items-start justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-text">{{ formattedDate() }}</h2>
-          <p class="text-sm text-text-muted mt-0.5">{{ greeting() }}</p>
+          <h2 class="page-title">{{ formattedDate() }}</h2>
+          <p class="page-subtitle">{{ greeting() }}</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 mt-1">
           @if (saving()) {
-            <div class="flex items-center gap-2 text-text-muted text-sm">
-              <div class="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            <div class="status-badge status-saving">
+              <div class="w-3 h-3 border-2 border-warning/30 border-t-warning rounded-full animate-spin"></div>
               Guardando
             </div>
           } @else if (saved()) {
-            <div class="flex items-center gap-1.5 text-success text-sm font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="status-badge status-saved">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
               Guardado
@@ -39,19 +39,52 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
             <path d="M7 2v20"></path>
             <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
           </svg>
-          Comidas del día
+          Comidas
         </h3>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-4 gap-2.5">
           @for (meal of meals; track meal.key) {
             <button
               (click)="toggleMeal(meal.key)"
               [class]="mealClasses(meal.key)"
             >
-              <span class="text-3xl mb-1.5 block">{{ meal.icon }}</span>
-              <span class="block text-sm font-medium">{{ meal.label }}</span>
-              @if (isMealActive(meal.key)) {
-                <span class="mt-1.5 w-2 h-2 rounded-full bg-primary block mx-auto"></span>
-              }
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-all duration-200"
+                   [class.bg-primary-light]="isMealActive(meal.key)"
+                   [class.bg-bg-warm]="!isMealActive(meal.key)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" [class.text-primary]="isMealActive(meal.key)" [class.text-text-muted]="!isMealActive(meal.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  @switch (meal.key) {
+                    @case ('breakfast') {
+                      <circle cx="12" cy="12" r="5"></circle>
+                      <line x1="12" y1="1" x2="12" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="23"></line>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                      <line x1="1" y1="12" x2="3" y2="12"></line>
+                      <line x1="21" y1="12" x2="23" y2="12"></line>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    }
+                    @case ('lunch') {
+                      <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                      <line x1="6" y1="1" x2="6" y2="4"></line>
+                      <line x1="10" y1="1" x2="10" y2="4"></line>
+                      <line x1="14" y1="1" x2="14" y2="4"></line>
+                    }
+                    @case ('snack') {
+                      <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+                      <path d="M8.5 8.5v.01"></path>
+                      <path d="M16 15.5v.01"></path>
+                      <path d="M12 12v.01"></path>
+                      <path d="M11 17v.01"></path>
+                      <path d="M7 14v.01"></path>
+                    }
+                    @case ('dinner') {
+                      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    }
+                  }
+                </svg>
+              </div>
+              <span class="text-xs font-semibold" [class.text-primary]="isMealActive(meal.key)" [class.text-text-muted]="!isMealActive(meal.key)">{{ meal.label }}</span>
             </button>
           }
         </div>
@@ -64,25 +97,53 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
             <path d="m6 8-4 4 4 4"></path>
             <path d="m14.5 4-5 16"></path>
           </svg>
-          Actividad física
+          Actividad
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-4 gap-2.5">
           @for (activity of activities; track activity.value) {
             <button
               (click)="setActivity(activity.value)"
               [class]="activityClasses(activity.value)"
             >
-              <span class="text-xl mb-0.5 block">{{ activity.icon }}</span>
-              <span class="text-sm font-medium">{{ activity.label }}</span>
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-all duration-200"
+                   [class.bg-primary-light]="isActivityActive(activity.value)"
+                   [class.bg-bg-warm]="!isActivityActive(activity.value)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" [class.text-primary]="isActivityActive(activity.value)" [class.text-text-muted]="!isActivityActive(activity.value)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  @switch (activity.value) {
+                    @case ('none') {
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                    }
+                    @case ('walk') {
+                      <circle cx="12" cy="5" r="1"></circle>
+                      <path d="m9 20 3-6 3 6"></path>
+                      <path d="m6 8 6 2 6-2"></path>
+                      <path d="M12 10v4"></path>
+                    }
+                    @case ('exercise') {
+                      <path d="m18 16 4-4-4-4"></path>
+                      <path d="m6 8-4 4 4 4"></path>
+                      <path d="M14.5 4h-5l-1 16"></path>
+                    }
+                    @case ('walk_and_exercise') {
+                      <path d="m18 16 4-4-4-4"></path>
+                      <path d="m6 8-4 4 4 4"></path>
+                      <path d="m14.5 4-1 7h3l-1 5"></path>
+                      <path d="M10 12h4"></path>
+                    }
+                  }
+                </svg>
+              </div>
+              <span class="text-xs font-semibold" [class.text-primary]="isActivityActive(activity.value)" [class.text-text-muted]="!isActivityActive(activity.value)">{{ activity.label }}</span>
             </button>
           }
         </div>
       </section>
 
       <div class="grid grid-cols-2 gap-4">
-        <section class="card">
-          <h3 class="card-header text-xs">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <section class="card py-4">
+          <h3 class="card-header text-sm mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
             Energía
@@ -93,14 +154,28 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
                 (click)="setEnergy(level.value)"
                 [class]="selectorClasses('energy', level.value)"
               >
-                {{ level.label }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  @switch (level.value) {
+                    @case ('low') {
+                      <path d="M18.364 5.636a9 9 0 1 1-12.728 0"></path>
+                    }
+                    @case ('medium') {
+                      <path d="M18.364 5.636a9 9 0 1 1-12.728 0"></path>
+                      <path d="M12 12v.01"></path>
+                    }
+                    @case ('high') {
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    }
+                  }
+                </svg>
+                {{ level.shortLabel }}
               </button>
             }
           </div>
         </section>
 
-        <section class="card">
-          <h3 class="card-header text-xs">
+        <section class="card py-4">
+          <h3 class="card-header text-sm mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M2 12h6"></path>
               <path d="M22 12h-6"></path>
@@ -115,7 +190,26 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
                 (click)="setAppetite(level.value)"
                 [class]="selectorClasses('appetite', level.value)"
               >
-                {{ level.label }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  @switch (level.value) {
+                    @case ('low') {
+                      <path d="M12 2a10 10 0 1 0 10 10H12V2Z"></path>
+                      <path d="M12 2a10 10 0 0 1 10 10"></path>
+                      <path d="M12 12v4"></path>
+                    }
+                    @case ('normal') {
+                      <path d="M12 2a10 10 0 1 0 10 10H12V2Z"></path>
+                      <path d="M12 12v4"></path>
+                      <path d="M12 16h.01"></path>
+                    }
+                    @case ('high') {
+                      <path d="M12 2a10 10 0 1 0 10 10H12V2Z"></path>
+                      <path d="M12 12v4"></path>
+                      <path d="M8 16h8"></path>
+                    }
+                  }
+                </svg>
+                {{ level.shortLabel }}
               </button>
             }
           </div>
@@ -128,14 +222,14 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
           </svg>
-          Notas
+          Nota
         </h3>
         <textarea
           [(ngModel)]="note"
           (blur)="saveNote()"
           placeholder="¿Cómo te sientes hoy? ¿Algo relevante que recordar?"
           rows="3"
-          class="input-field resize-none"
+          class="textarea-custom"
         ></textarea>
       </section>
     </div>
@@ -161,29 +255,29 @@ export class TodayComponent {
   });
 
   meals = [
-    { key: 'breakfast' as const, label: 'Desayuno', icon: '🌅' },
-    { key: 'lunch' as const, label: 'Almuerzo', icon: '☀️' },
-    { key: 'snack' as const, label: 'Merienda', icon: '🍪' },
-    { key: 'dinner' as const, label: 'Cena', icon: '🌙' }
+    { key: 'breakfast' as const, label: 'Desayuno', icon: 'sun' },
+    { key: 'lunch' as const, label: 'Almuerzo', icon: 'cup' },
+    { key: 'snack' as const, label: 'Merienda', icon: 'cookie' },
+    { key: 'dinner' as const, label: 'Cena', icon: 'moon' }
   ];
 
-  activities: { value: ActivityType; label: string; icon: string }[] = [
-    { value: 'none', label: 'Ninguna', icon: '🚫' },
-    { value: 'walk', label: 'Paseo', icon: '🚶' },
-    { value: 'exercise', label: 'Ejercicio', icon: '🏋️' },
-    { value: 'walk_and_exercise', label: 'Ambos', icon: '💪' }
+  activities: { value: ActivityType; label: string }[] = [
+    { value: 'none', label: 'Ninguna' },
+    { value: 'walk', label: 'Paseo' },
+    { value: 'exercise', label: 'Ejercicio' },
+    { value: 'walk_and_exercise', label: 'Ambos' }
   ];
 
-  energyLevels: { value: EnergyLevel; label: string }[] = [
-    { value: 'low', label: 'Baja' },
-    { value: 'medium', label: 'Media' },
-    { value: 'high', label: 'Alta' }
+  energyLevels: { value: EnergyLevel; label: string; shortLabel: string }[] = [
+    { value: 'low', label: 'Baja', shortLabel: 'B' },
+    { value: 'medium', label: 'Media', shortLabel: 'M' },
+    { value: 'high', label: 'Alta', shortLabel: 'A' }
   ];
 
-  appetiteLevels: { value: AppetiteLevel; label: string }[] = [
-    { value: 'low', label: 'Bajo' },
-    { value: 'normal', label: 'Normal' },
-    { value: 'high', label: 'Alto' }
+  appetiteLevels: { value: AppetiteLevel; label: string; shortLabel: string }[] = [
+    { value: 'low', label: 'Bajo', shortLabel: 'B' },
+    { value: 'normal', label: 'Normal', shortLabel: 'N' },
+    { value: 'high', label: 'Alto', shortLabel: 'A' }
   ];
 
   greeting = computed(() => {
@@ -264,28 +358,23 @@ export class TodayComponent {
   }
 
   mealClasses(key: string): string {
-    const isActive = (this.log() as any)[key];
-    return `
-      btn-option ${isActive ? 'btn-option-active' : ''}
-    `;
+    return 'btn-option py-3';
   }
 
   activityClasses(value: string): string {
-    const isActive = this.log().activityType === value;
-    return `
-      btn-option py-3 ${isActive ? 'btn-option-active' : ''}
-    `;
+    return 'btn-option py-3';
   }
 
   selectorClasses(type: 'energy' | 'appetite', value: string): string {
     const currentValue = type === 'energy' ? this.log().energy : this.log().appetite;
-    const isActive = currentValue === value;
-    return `
-      btn-selector ${isActive ? 'btn-selector-active' : ''}
-    `;
+    return currentValue === value ? 'btn-selector btn-selector-active' : 'btn-selector';
   }
 
   isMealActive(key: string): boolean {
     return !!(this.log() as any)[key];
+  }
+
+  isActivityActive(value: string): boolean {
+    return this.log().activityType === value;
   }
 }

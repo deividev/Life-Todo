@@ -13,15 +13,15 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
   standalone: true,
   imports: [],
   template: `
-    <div class="space-y-5">
-      <div>
-        <h2 class="text-2xl font-bold text-text">Tu Progreso</h2>
-        <p class="text-sm text-text-muted mt-0.5">Últimas 12 semanas</p>
+    <div class="animate-fade-in space-y-5">
+      <div class="page-header">
+        <h2 class="page-title">Tu Progreso</h2>
+        <p class="page-subtitle">Últimas 12 semanas</p>
       </div>
 
       <section class="card">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="card-header text-xs m-0">
+          <h3 class="card-header text-sm m-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 3v18h18"></path>
               <path d="m19 9-5 5-4-4-3 3"></path>
@@ -29,13 +29,13 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
             Evolución de peso
           </h3>
           @if (weightChange() !== null) {
-            <div class="flex items-center gap-1 text-sm font-medium" [class.text-success]="weightChange()! < 0" [class.text-danger]="weightChange()! > 0">
+            <div class="flex items-center gap-1.5 text-sm font-semibold" [class.text-success]="weightChange()! < 0" [class.text-danger]="weightChange()! > 0" [class.text-text-muted]="weightChange() === 0">
               @if (weightChange()! < 0) {
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               } @else if (weightChange()! > 0) {
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="18 15 12 9 6 15"></polyline>
                 </svg>
               }
@@ -44,49 +44,83 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
           }
         </div>
         @if (weightData().length > 0) {
-          <div class="h-56">
+          <div class="chart-container">
             <canvas #weightChart></canvas>
           </div>
         } @else {
           <div class="empty-state">
-            <div class="empty-state-icon">📊</div>
+            <div class="w-16 h-16 rounded-2xl bg-bg-warm flex items-center justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18"></path>
+                <path d="m19 9-5 5-4-4-3 3"></path>
+              </svg>
+            </div>
             <p class="empty-state-text">Registra tu peso semanalmente para ver la evolución</p>
           </div>
         }
       </section>
 
       <section class="card">
-        <h3 class="card-header text-xs">
+        <h3 class="card-header text-sm">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
             <path d="M7 2v20"></path>
             <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
           </svg>
-          Comidas (últimos 30 días)
+          Comidas (30 días)
         </h3>
         <div class="grid grid-cols-2 gap-3">
           @for (meal of mealStats(); track meal.name) {
-            <div class="bg-gradient-to-br from-surface to-background rounded-xl p-4 border border-border/50">
+            <div class="bg-bg-warm rounded-xl p-4 border border-border-light">
               <div class="flex items-center gap-3">
-                <span class="text-2xl">{{ meal.icon }}</span>
-                <div class="flex-1">
+                <div class="w-11 h-11 rounded-xl bg-surface flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    @switch (meal.icon) {
+                      @case ('breakfast') {
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                      }
+                      @case ('lunch') {
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                      }
+                      @case ('snack') {
+                        <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+                      }
+                      @case ('dinner') {
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                      }
+                    }
+                  </svg>
+                </div>
+                <div>
                   <div class="text-2xl font-bold text-text">{{ meal.count }}</div>
-                  <div class="text-xs text-text-muted">{{ meal.name }}</div>
+                  <div class="text-xs text-text-muted font-medium">{{ meal.name }}</div>
                 </div>
               </div>
             </div>
           }
         </div>
         @if (totalMeals() > 0) {
-          <div class="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-sm">
-            <span class="text-text-muted">Total registrado</span>
+          <div class="mt-4 pt-4 border-t border-border-light flex items-center justify-between text-sm">
+            <span class="text-text-muted font-medium">Total registrado</span>
             <span class="font-semibold text-primary">{{ totalMeals() }} comidas</span>
           </div>
         }
       </section>
 
       <section class="card">
-        <h3 class="card-header text-xs">
+        <h3 class="card-header text-sm">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m18 16 4-4-4-4"></path>
             <path d="m6 8-4 4 4 4"></path>
@@ -99,14 +133,12 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
             @for (activity of activityStats(); track activity.name) {
               <div>
                 <div class="flex justify-between text-sm mb-2">
-                  <span class="flex items-center gap-2">
-                    <span>{{ activity.name }}</span>
-                  </span>
+                  <span class="font-medium text-text">{{ activity.name }}</span>
                   <span class="text-text-muted font-medium">{{ activity.count }} días</span>
                 </div>
-                <div class="h-3 bg-background rounded-full overflow-hidden">
+                <div class="stat-bar">
                   <div 
-                    class="h-full rounded-full transition-all duration-500"
+                    class="stat-bar-fill"
                     [style.width.%]="activity.percentage"
                     [style.background-color]="activity.color"
                   ></div>
@@ -115,16 +147,23 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
             }
           </div>
         } @else {
-          <div class="empty-state py-6">
-            <div class="empty-state-icon text-3xl">🏃</div>
-            <p class="empty-state-text mt-2">Registra tu actividad para ver estadísticas</p>
+          <div class="empty-state py-8">
+            <div class="w-14 h-14 rounded-2xl bg-bg-warm flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="5" r="1"></circle>
+                <path d="m9 20 3-6 3 6"></path>
+                <path d="m6 8 6 2 6-2"></path>
+                <path d="M12 10v4"></path>
+              </svg>
+            </div>
+            <p class="empty-state-text">Registra tu actividad para ver estadísticas</p>
           </div>
         }
       </section>
 
       @if (latestWeekly()) {
-        <section class="card">
-          <h3 class="card-header text-xs">
+        <section class="card-elevated">
+          <h3 class="card-header text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2v20"></path>
               <path d="M18 2v20"></path>
@@ -134,15 +173,15 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
           </h3>
           <div class="grid grid-cols-3 gap-3">
             <div class="metric-card">
-              <div class="metric-value text-xl">{{ latestWeekly()!.weightKg || '--' }}</div>
+              <div class="metric-value">{{ latestWeekly()!.weightKg || '--' }}</div>
               <div class="metric-label">kg</div>
             </div>
             <div class="metric-card">
-              <div class="metric-value text-xl">{{ latestWeekly()!.waistCm || '--' }}</div>
+              <div class="metric-value">{{ latestWeekly()!.waistCm || '--' }}</div>
               <div class="metric-label">cintura</div>
             </div>
             <div class="metric-card">
-              <div class="metric-value text-xl">{{ latestWeekly()!.armCm || '--' }}</div>
+              <div class="metric-value">{{ latestWeekly()!.armCm || '--' }}</div>
               <div class="metric-label">brazo</div>
             </div>
           </div>
@@ -195,10 +234,10 @@ export class ProgressComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.weightData.set(data.weightData || []);
         this.mealStats.set([
-          { name: 'Desayunos', icon: '🌅', count: data.mealStats?.breakfast || 0 },
-          { name: 'Almuerzos', icon: '☀️', count: data.mealStats?.lunch || 0 },
-          { name: 'Meriendas', icon: '🍪', count: data.mealStats?.snack || 0 },
-          { name: 'Cenas', icon: '🌙', count: data.mealStats?.dinner || 0 }
+          { name: 'Desayunos', icon: 'breakfast', count: data.mealStats?.breakfast || 0 },
+          { name: 'Almuerzos', icon: 'lunch', count: data.mealStats?.lunch || 0 },
+          { name: 'Meriendas', icon: 'snack', count: data.mealStats?.snack || 0 },
+          { name: 'Cenas', icon: 'dinner', count: data.mealStats?.dinner || 0 }
         ]);
         this.totalMeals.set(data.totalMeals || 0);
         this.latestWeekly.set(data.latestWeekly);
@@ -255,15 +294,16 @@ export class ProgressComponent implements OnInit, AfterViewInit {
         datasets: [{
           label: 'Peso (kg)',
           data: data.map(d => d.weight),
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderColor: '#0d9488',
+          backgroundColor: 'rgba(13, 148, 136, 0.08)',
           fill: true,
           tension: 0.4,
           pointRadius: 5,
           pointBackgroundColor: '#ffffff',
-          pointBorderColor: '#10b981',
+          pointBorderColor: '#0d9488',
           pointBorderWidth: 2,
-          pointHoverRadius: 7
+          pointHoverRadius: 7,
+          pointHoverBackgroundColor: '#0d9488'
         }]
       },
       options: {
@@ -274,11 +314,11 @@ export class ProgressComponent implements OnInit, AfterViewInit {
             display: false
           },
           tooltip: {
-            backgroundColor: '#1e293b',
+            backgroundColor: '#1a2e1a',
             titleColor: '#ffffff',
-            bodyColor: '#94a3b8',
+            bodyColor: '#7d917d',
             padding: 12,
-            cornerRadius: 8,
+            cornerRadius: 10,
             displayColors: false,
             callbacks: {
               label: (context) => `${context.parsed.y} kg`
@@ -289,10 +329,10 @@ export class ProgressComponent implements OnInit, AfterViewInit {
           y: {
             beginAtZero: false,
             grid: {
-              color: 'rgba(0,0,0,0.05)'
+              color: 'rgba(0,0,0,0.04)'
             },
             ticks: {
-              color: '#64748b',
+              color: '#7d917d',
               font: { size: 11 }
             }
           },
@@ -301,7 +341,7 @@ export class ProgressComponent implements OnInit, AfterViewInit {
               display: false
             },
             ticks: {
-              color: '#64748b',
+              color: '#7d917d',
               font: { size: 11 }
             }
           }
