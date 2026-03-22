@@ -15,14 +15,15 @@ interface NavItem {
     <div class="app-shell">
       <header class="app-header">
         <div class="app-header-content">
-          <div>
+          <div class="flex-1">
             <h1 class="app-title">Life Tracker</h1>
-            <p class="app-subtitle">Tu registro de bienestar</p>
+            <p class="app-subtitle">Tu registro de bienestar diario</p>
           </div>
-          <div class="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center">
-            <i class="pi pi-heart text-primary"></i>
+          <div class="header-logo">
+            <i class="pi pi-heart-fill"></i>
           </div>
         </div>
+        <div class="header-accent-line"></div>
       </header>
 
       <main class="app-content">
@@ -48,6 +49,17 @@ interface NavItem {
   styles: [`
     :host {
       display: contents;
+    }
+
+    .header-accent-line {
+      height: 3px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.4) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.4) 80%, 
+        transparent 100%
+      );
     }
   `]
 })
