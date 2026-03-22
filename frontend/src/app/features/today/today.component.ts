@@ -1,6 +1,5 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { Textarea } from 'primeng/textarea';
@@ -15,6 +14,7 @@ interface MealOption {
   icon: string;
   bgColor: string;
   iconColor: string;
+  gradient: string;
 }
 
 interface ActivityOption {
@@ -23,6 +23,7 @@ interface ActivityOption {
   icon: string;
   color: string;
   bgColor: string;
+  gradient: string;
 }
 
 @Component({
@@ -30,7 +31,6 @@ interface ActivityOption {
   standalone: true,
   imports: [
     FormsModule, 
-    Card, 
     Button, 
     SelectButton, 
     Textarea, 
@@ -52,194 +52,41 @@ interface ActivityOption {
         />
       </div>
 
-      <!-- Desktop: Two column layout -->
-      <div class="desktop-two-col">
-        <!-- Left Column - Quick Summary & Notes -->
-        <div class="flex flex-col gap-4">
-          <div class="summary-hero">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3 sm:gap-4">
-                <div class="hero-icon">
-                  <i class="pi pi-sun"></i>
-                </div>
-                <div>
-                  <h3 class="hero-title">Resumen del día</h3>
-                  <p class="hero-subtitle">{{ todaySummary() }}</p>
-                </div>
-              </div>
-              <div class="flex gap-1.5 sm:gap-2">
-                @for (meal of mealOptions; track meal.key) {
-                  @if (isMealActive(meal.key)) {
-                    <div class="chip-meal" [style.background]="meal.bgColor">
-                      <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
-                    </div>
-                  }
-                }
-              </div>
+      <div class="hero-section">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-4 sm:gap-5">
+            <div class="hero-icon-lg">
+              <i class="pi pi-sun"></i>
+            </div>
+            <div>
+              <h3 class="hero-title">Resumen del día</h3>
+              <p class="hero-subtitle">{{ todaySummary() }}</p>
             </div>
           </div>
-
-          <p-card styleClass="section-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <div class="card-header-icon card-header-icon-purple">
-                  <i class="pi pi-pencil"></i>
+          <div class="flex gap-2 sm:gap-3">
+            @for (meal of mealOptions; track meal.key) {
+              @if (isMealActive(meal.key)) {
+                <div class="chip-meal" [style.background]="meal.gradient">
+                  <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
                 </div>
-                <div>
-                  <span class="font-bold text-sm sm:text-base text-slate-900">Notas personales</span>
-                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
-                </div>
-              </div>
-            </ng-template>
-            <textarea 
-              pTextarea 
-              [(ngModel)]="note" 
-              (blur)="saveNote()" 
-              placeholder="¿Cómo te sientes? ¿Qué has notado hoy?"
-              [autoResize]="true" 
-              rows="4" 
-              class="w-full"
-            ></textarea>
-          </p-card>
-        </div>
-
-        <!-- Right Column - Meals, Activity, Energy, Appetite -->
-        <div class="flex flex-col gap-4">
-          <p-card styleClass="section-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <div class="card-header-icon">
-                  <i class="pi pi-utensils"></i>
-                </div>
-                <div>
-                  <span class="font-bold text-sm sm:text-base text-slate-900">Comidas del día</span>
-                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
-                </div>
-              </div>
-            </ng-template>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-              @for (meal of mealOptions; track meal.key) {
-                <p-button
-                  [label]="meal.label"
-                  [icon]="'pi ' + meal.icon"
-                  [severity]="isMealActive(meal.key) ? 'success' : 'secondary'"
-                  (onClick)="toggleMeal(meal.key)"
-                  styleClass="meal-btn w-full"
-                  [attr.data-active]="isMealActive(meal.key)"
-                />
               }
-            </div>
-          </p-card>
-
-          <p-card styleClass="section-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <div class="card-header-icon card-header-icon-success">
-                  <i class="pi pi-directions-run"></i>
-                </div>
-                <div>
-                  <span class="font-bold text-sm sm:text-base text-slate-900">Actividad física</span>
-                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
-                </div>
-              </div>
-            </ng-template>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-              @for (activity of activityOptions; track activity.value) {
-                <p-button
-                  [label]="activity.label"
-                  [icon]="'pi ' + activity.icon"
-                  [severity]="isActivityActive(activity.value) ? 'success' : 'secondary'"
-                  (onClick)="setActivity(activity.value)"
-                  styleClass="activity-btn w-full"
-                />
-              }
-            </div>
-          </p-card>
-
-          <p-card styleClass="section-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <div class="card-header-icon card-header-icon-warning">
-                  <i class="pi pi-bolt"></i>
-                </div>
-                <div>
-                  <span class="font-bold text-sm sm:text-base text-slate-900">Nivel de energía</span>
-                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
-                </div>
-              </div>
-            </ng-template>
-            <p-selectbutton 
-              [options]="energyOptions" 
-              [(ngModel)]="energyValue"
-              (onChange)="setEnergy($event.value)"
-              optionLabel="label"
-              optionValue="value"
-              styleClass="w-full energy-selector"
-            />
-          </p-card>
-
-          <p-card styleClass="section-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <div class="card-header-icon card-header-icon-info">
-                  <i class="pi pi-heart"></i>
-                </div>
-                <div>
-                  <span class="font-bold text-sm sm:text-base text-slate-900">Apetito</span>
-                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
-                </div>
-              </div>
-            </ng-template>
-            <p-selectbutton 
-              [options]="appetiteOptions" 
-              [(ngModel)]="appetiteValue"
-              (onChange)="setAppetite($event.value)"
-              optionLabel="label"
-              optionValue="value"
-              styleClass="w-full appetite-selector"
-            />
-          </p-card>
+            }
+          </div>
         </div>
       </div>
 
-      <!-- Mobile-only: stacked layout (default, hidden on lg+) -->
-      <div class="lg:hidden flex flex-col gap-4">
-        <div class="summary-hero">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3 sm:gap-4">
-              <div class="hero-icon">
-                <i class="pi pi-sun"></i>
-              </div>
-              <div>
-                <h3 class="hero-title">Resumen del día</h3>
-                <p class="hero-subtitle">{{ todaySummary() }}</p>
-              </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+        <div class="widget-card">
+          <div class="widget-header">
+            <div class="widget-icon" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+              <i class="pi pi-utensils" style="color: #d97706;"></i>
             </div>
-            <div class="flex gap-1.5 sm:gap-2">
-              @for (meal of mealOptions; track meal.key) {
-                @if (isMealActive(meal.key)) {
-                  <div class="chip-meal" [style.background]="meal.bgColor">
-                    <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
-                  </div>
-                }
-              }
+            <div>
+              <h4 class="widget-title">Comidas del día</h4>
+              <p class="widget-subtitle">Toca para marcar las comidas tomadas</p>
             </div>
           </div>
-        </div>
-
-        <p-card styleClass="section-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <div class="card-header-icon">
-                <i class="pi pi-utensils"></i>
-              </div>
-              <div>
-                <span class="font-bold text-sm sm:text-base text-slate-900">Comidas del día</span>
-                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
-              </div>
-            </div>
-          </ng-template>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             @for (meal of mealOptions; track meal.key) {
               <p-button
                 [label]="meal.label"
@@ -248,24 +95,23 @@ interface ActivityOption {
                 (onClick)="toggleMeal(meal.key)"
                 styleClass="meal-btn w-full"
                 [attr.data-active]="isMealActive(meal.key)"
+                [attr.data-color]="meal.iconColor"
               />
             }
           </div>
-        </p-card>
+        </div>
 
-        <p-card styleClass="section-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <div class="card-header-icon card-header-icon-success">
-                <i class="pi pi-directions-run"></i>
-              </div>
-              <div>
-                <span class="font-bold text-sm sm:text-base text-slate-900">Actividad física</span>
-                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
-              </div>
+        <div class="widget-card">
+          <div class="widget-header">
+            <div class="widget-icon" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+              <i class="pi pi-directions-run" style="color: #059669;"></i>
             </div>
-          </ng-template>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            <div>
+              <h4 class="widget-title">Actividad física</h4>
+              <p class="widget-subtitle">¿Qué has hecho hoy?</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             @for (activity of activityOptions; track activity.value) {
               <p-button
                 [label]="activity.label"
@@ -273,23 +119,24 @@ interface ActivityOption {
                 [severity]="isActivityActive(activity.value) ? 'success' : 'secondary'"
                 (onClick)="setActivity(activity.value)"
                 styleClass="activity-btn w-full"
+                [attr.data-active]="isActivityActive(activity.value)"
               />
             }
           </div>
-        </p-card>
+        </div>
+      </div>
 
-        <p-card styleClass="section-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <div class="card-header-icon card-header-icon-warning">
-                <i class="pi pi-bolt"></i>
-              </div>
-              <div>
-                <span class="font-bold text-sm sm:text-base text-slate-900">Nivel de energía</span>
-                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
-              </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+        <div class="widget-card">
+          <div class="widget-header">
+            <div class="widget-icon" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+              <i class="pi pi-bolt" style="color: #d97706;"></i>
             </div>
-          </ng-template>
+            <div>
+              <h4 class="widget-title">Nivel de energía</h4>
+              <p class="widget-subtitle">¿Cómo te sientes hoy?</p>
+            </div>
+          </div>
           <p-selectbutton 
             [options]="energyOptions" 
             [(ngModel)]="energyValue"
@@ -298,20 +145,18 @@ interface ActivityOption {
             optionValue="value"
             styleClass="w-full energy-selector"
           />
-        </p-card>
+        </div>
 
-        <p-card styleClass="section-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <div class="card-header-icon card-header-icon-info">
-                <i class="pi pi-heart"></i>
-              </div>
-              <div>
-                <span class="font-bold text-sm sm:text-base text-slate-900">Apetito</span>
-                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
-              </div>
+        <div class="widget-card">
+          <div class="widget-header">
+            <div class="widget-icon" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);">
+              <i class="pi pi-heart" style="color: #db2777;"></i>
             </div>
-          </ng-template>
+            <div>
+              <h4 class="widget-title">Apetito</h4>
+              <p class="widget-subtitle">¿Cómo ha sido tu hambre hoy?</p>
+            </div>
+          </div>
           <p-selectbutton 
             [options]="appetiteOptions" 
             [(ngModel)]="appetiteValue"
@@ -320,30 +165,28 @@ interface ActivityOption {
             optionValue="value"
             styleClass="w-full appetite-selector"
           />
-        </p-card>
+        </div>
+      </div>
 
-        <p-card styleClass="section-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <div class="card-header-icon card-header-icon-purple">
-                <i class="pi pi-pencil"></i>
-              </div>
-              <div>
-                <span class="font-bold text-sm sm:text-base text-slate-900">Notas personales</span>
-                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
-              </div>
-            </div>
-          </ng-template>
-          <textarea 
-            pTextarea 
-            [(ngModel)]="note" 
-            (blur)="saveNote()" 
-            placeholder="¿Cómo te sientes? ¿Qué has notado hoy?"
-            [autoResize]="true" 
-            rows="3" 
-            class="w-full"
-          ></textarea>
-        </p-card>
+      <div class="widget-card">
+        <div class="widget-header">
+          <div class="widget-icon" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);">
+            <i class="pi pi-pencil" style="color: #7c3aed;"></i>
+          </div>
+          <div>
+            <h4 class="widget-title">Notas personales</h4>
+            <p class="widget-subtitle">Reflexiones sobre tu día</p>
+          </div>
+        </div>
+        <textarea 
+          pTextarea 
+          [(ngModel)]="note" 
+          (blur)="saveNote()" 
+          placeholder="¿Cómo te sientes? ¿Qué has notado hoy? Escribe aquí tus observaciones..."
+          [autoResize]="true" 
+          rows="4" 
+          class="w-full"
+        ></textarea>
       </div>
     </div>
   `,
@@ -352,53 +195,63 @@ interface ActivityOption {
       display: block;
     }
 
-    .section-card {
-      @apply mb-4;
+    .widget-card {
+      @apply bg-white rounded-2xl p-5 border border-slate-200/80;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .hero-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 640px) {
-      .hero-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
+    @media (hover: hover) {
+      .widget-card:hover {
+        @apply border-teal-200;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        transform: translateY(-1px);
       }
     }
 
-    .hero-icon i {
-      font-size: 20px;
-      color: white;
-    }
-
     @media (min-width: 640px) {
-      .hero-icon i {
-        font-size: 24px;
+      .widget-card {
+        @apply p-6 rounded-2xl;
       }
     }
 
-    .hero-title {
-      @apply text-base sm:text-lg font-bold text-white;
+    .widget-header {
+      @apply flex items-center gap-3 mb-5;
     }
 
-    .hero-subtitle {
-      @apply text-xs sm:text-sm text-white/80;
+    @media (min-width: 640px) {
+      .widget-header {
+        @apply gap-4 mb-6;
+      }
+    }
+
+    .widget-icon {
+      @apply w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center flex-shrink-0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    @media (min-width: 640px) {
+      .widget-icon {
+        @apply w-14 h-14;
+      }
+    }
+
+    .widget-icon i {
+      @apply text-xl;
+    }
+
+    @media (min-width: 640px) {
+      .widget-icon i {
+        @apply text-2xl;
+      }
+    }
+
+    .widget-title {
+      @apply text-base sm:text-lg font-bold text-slate-900;
+    }
+
+    .widget-subtitle {
+      @apply text-xs sm:text-sm text-slate-500 mt-0.5;
     }
 
     :host ::ng-deep .meal-btn[data-active="true"],
@@ -407,63 +260,136 @@ interface ActivityOption {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 10px 6px !important;
-      min-height: 72px;
+      padding: 12px 8px !important;
+      min-height: 80px;
+      border-radius: 16px !important;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .meal-btn[data-active="true"],
       :host ::ng-deep .activity-btn {
-        padding: 12px 8px !important;
-        min-height: 84px;
+        padding: 14px 10px !important;
+        min-height: 96px;
       }
     }
 
     :host ::ng-deep .meal-btn[data-active="true"],
     :host ::ng-deep .activity-btn.p-button-success {
-      background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%) !important;
-      border-color: var(--color-success) !important;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      border-color: #10b981 !important;
       color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
     :host ::ng-deep .meal-btn .p-button-label,
     :host ::ng-deep .activity-btn .p-button-label {
-      @apply text-xs sm:text-sm font-semibold mt-1.5;
+      @apply text-xs sm:text-sm font-semibold mt-2;
     }
 
     :host ::ng-deep .meal-btn .p-button-icon,
     :host ::ng-deep .activity-btn .p-button-icon {
-      @apply text-xl sm:text-2xl;
+      @apply text-2xl sm:text-3xl;
     }
 
     :host ::ng-deep .energy-selector .p-selectbutton,
     :host ::ng-deep .appetite-selector .p-selectbutton {
       display: flex;
       width: 100%;
-      gap: 4px;
+      gap: 8px;
     }
 
     :host ::ng-deep .energy-selector .p-button,
     :host ::ng-deep .appetite-selector .p-button {
       flex: 1;
       justify-content: center;
-      padding: 10px 6px;
-      border-radius: 12px;
-      font-size: 0.8125rem;
+      padding: 12px 8px;
+      border-radius: 14px;
+      font-size: 0.875rem;
     }
 
     @media (min-width: 640px) {
       :host ::ng-deep .energy-selector .p-button,
       :host ::ng-deep .appetite-selector .p-button {
-        padding: 12px 16px;
-        border-radius: 14px;
-        font-size: 0.9375rem;
+        padding: 14px 20px;
+        border-radius: 16px;
+        font-size: 1rem;
       }
     }
 
     :host ::ng-deep .energy-selector .p-button .p-button-label,
     :host ::ng-deep .appetite-selector .p-button .p-button-label {
       font-weight: 600;
+    }
+
+    .hero-section {
+      @apply bg-gradient-to-br from-teal-600 via-teal-500 to-emerald-500 rounded-2xl p-5 sm:p-6 mb-5 text-white relative overflow-hidden;
+      box-shadow: 0 8px 32px rgba(13, 148, 136, 0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 60%;
+      height: 150%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    @media (min-width: 640px) {
+      .hero-section {
+        @apply p-6 mb-6;
+      }
+    }
+
+    .hero-icon-lg {
+      @apply w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    @media (min-width: 640px) {
+      .hero-icon-lg {
+        @apply w-18 h-18;
+      }
+    }
+
+    .hero-icon-lg i {
+      @apply text-2xl sm:text-3xl text-white;
+    }
+
+    .hero-title {
+      @apply text-xl sm:text-2xl font-bold text-white;
+    }
+
+    @media (min-width: 640px) {
+      .hero-title {
+        @apply text-2xl;
+      }
+    }
+
+    .hero-subtitle {
+      @apply text-sm sm:text-base text-white/80 mt-1;
+    }
+
+    .chip-meal {
+      @apply inline-flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    @media (min-width: 640px) {
+      .chip-meal {
+        @apply w-12 h-12 rounded-xl;
+      }
+      .chip-meal i {
+        @apply text-xl;
+      }
+    }
+
+    .chip-meal i {
+      @apply text-lg;
     }
   `]
 })
@@ -489,17 +415,17 @@ export class TodayComponent {
   });
 
   mealOptions: MealOption[] = [
-    { key: 'breakfast', label: 'Desayuno', icon: 'pi-sun', bgColor: 'var(--color-meal-breakfast)', iconColor: 'var(--color-meal-breakfast-icon)' },
-    { key: 'lunch', label: 'Almuerzo', icon: 'pi-coffee', bgColor: 'var(--color-meal-lunch)', iconColor: 'var(--color-meal-lunch-icon)' },
-    { key: 'snack', label: 'Merienda', icon: 'pi-briefcase', bgColor: 'var(--color-meal-snack)', iconColor: 'var(--color-meal-snack-icon)' },
-    { key: 'dinner', label: 'Cena', icon: 'pi-moon', bgColor: 'var(--color-meal-dinner)', iconColor: 'var(--color-meal-dinner-icon)' }
+    { key: 'breakfast', label: 'Desayuno', icon: 'pi-sun', bgColor: 'var(--color-meal-breakfast-solid)', iconColor: 'var(--color-meal-breakfast-icon)', gradient: 'linear-gradient(135deg, #fef9c3 0%, #fef08a 100%)' },
+    { key: 'lunch', label: 'Almuerzo', icon: 'pi-coffee', bgColor: 'var(--color-meal-lunch-solid)', iconColor: 'var(--color-meal-lunch-icon)', gradient: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)' },
+    { key: 'snack', label: 'Merienda', icon: 'pi-apple', bgColor: 'var(--color-meal-snack-solid)', iconColor: 'var(--color-meal-snack-icon)', gradient: 'linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 100%)' },
+    { key: 'dinner', label: 'Cena', icon: 'pi-moon', bgColor: 'var(--color-meal-dinner-solid)', iconColor: 'var(--color-meal-dinner-icon)', gradient: 'linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%)' }
   ];
 
   activityOptions: ActivityOption[] = [
-    { value: 'none', label: 'Ninguna', icon: 'pi-minus', color: 'var(--color-activity-none-icon)', bgColor: 'var(--color-activity-none)' },
-    { value: 'walk', label: 'Paseo', icon: 'pi-directions-walk', color: 'var(--color-activity-walk-icon)', bgColor: 'var(--color-activity-walk)' },
-    { value: 'exercise', label: 'Ejercicio', icon: 'pi-bolt', color: 'var(--color-activity-exercise-icon)', bgColor: 'var(--color-activity-exercise)' },
-    { value: 'walk_and_exercise', label: 'Ambos', icon: 'pi-star', color: 'var(--color-activity-both-icon)', bgColor: 'var(--color-activity-both)' }
+    { value: 'none', label: 'Ninguna', icon: 'pi-minus', color: '#64748b', bgColor: '#e2e8f0', gradient: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)' },
+    { value: 'walk', label: 'Paseo', icon: 'pi-directions-walk', color: '#059669', bgColor: '#a7f3d0', gradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' },
+    { value: 'exercise', label: 'Ejercicio', icon: 'pi-bolt', color: '#d97706', bgColor: '#fde68a', gradient: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' },
+    { value: 'walk_and_exercise', label: 'Ambos', icon: 'pi-star', color: '#4f46e5', bgColor: '#c7d2fe', gradient: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' }
   ];
 
   energyOptions = [
@@ -533,7 +459,7 @@ export class TodayComponent {
   todaySummary = computed(() => {
     const meals = ['breakfast', 'lunch', 'snack', 'dinner'].filter(m => (this.log() as any)[m]);
     if (meals.length === 0) return 'Sin registrar todavía';
-    if (meals.length === 4) return 'Día completo - ¡Genial!';
+    if (meals.length === 4) return 'Día completo - ¡Excelente!';
     return `${meals.length} de 4 comidas registradas`;
   });
 
