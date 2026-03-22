@@ -52,146 +52,299 @@ interface ActivityOption {
         />
       </div>
 
-      <div class="summary-hero">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3 sm:gap-4">
-            <div class="hero-icon">
-              <i class="pi pi-sun"></i>
-            </div>
-            <div>
-              <h3 class="hero-title">Resumen del día</h3>
-              <p class="hero-subtitle">{{ todaySummary() }}</p>
-            </div>
-          </div>
-          <div class="flex gap-1.5 sm:gap-2">
-            @for (meal of mealOptions; track meal.key) {
-              @if (isMealActive(meal.key)) {
-                <div class="chip-meal" [style.background]="meal.bgColor">
-                  <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
+      <!-- Desktop: Two column layout -->
+      <div class="desktop-two-col">
+        <!-- Left Column - Quick Summary & Notes -->
+        <div class="flex flex-col gap-4">
+          <div class="summary-hero">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3 sm:gap-4">
+                <div class="hero-icon">
+                  <i class="pi pi-sun"></i>
                 </div>
-              }
-            }
+                <div>
+                  <h3 class="hero-title">Resumen del día</h3>
+                  <p class="hero-subtitle">{{ todaySummary() }}</p>
+                </div>
+              </div>
+              <div class="flex gap-1.5 sm:gap-2">
+                @for (meal of mealOptions; track meal.key) {
+                  @if (isMealActive(meal.key)) {
+                    <div class="chip-meal" [style.background]="meal.bgColor">
+                      <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
           </div>
+
+          <p-card styleClass="section-card">
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <div class="card-header-icon card-header-icon-purple">
+                  <i class="pi pi-pencil"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-slate-900">Notas personales</span>
+                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
+                </div>
+              </div>
+            </ng-template>
+            <textarea 
+              pTextarea 
+              [(ngModel)]="note" 
+              (blur)="saveNote()" 
+              placeholder="¿Cómo te sientes? ¿Qué has notado hoy?"
+              [autoResize]="true" 
+              rows="4" 
+              class="w-full"
+            ></textarea>
+          </p-card>
+        </div>
+
+        <!-- Right Column - Meals, Activity, Energy, Appetite -->
+        <div class="flex flex-col gap-4">
+          <p-card styleClass="section-card">
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <div class="card-header-icon">
+                  <i class="pi pi-utensils"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-slate-900">Comidas del día</span>
+                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
+                </div>
+              </div>
+            </ng-template>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              @for (meal of mealOptions; track meal.key) {
+                <p-button
+                  [label]="meal.label"
+                  [icon]="'pi ' + meal.icon"
+                  [severity]="isMealActive(meal.key) ? 'success' : 'secondary'"
+                  (onClick)="toggleMeal(meal.key)"
+                  styleClass="meal-btn w-full"
+                  [attr.data-active]="isMealActive(meal.key)"
+                />
+              }
+            </div>
+          </p-card>
+
+          <p-card styleClass="section-card">
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <div class="card-header-icon card-header-icon-success">
+                  <i class="pi pi-directions-run"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-slate-900">Actividad física</span>
+                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
+                </div>
+              </div>
+            </ng-template>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              @for (activity of activityOptions; track activity.value) {
+                <p-button
+                  [label]="activity.label"
+                  [icon]="'pi ' + activity.icon"
+                  [severity]="isActivityActive(activity.value) ? 'success' : 'secondary'"
+                  (onClick)="setActivity(activity.value)"
+                  styleClass="activity-btn w-full"
+                />
+              }
+            </div>
+          </p-card>
+
+          <p-card styleClass="section-card">
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <div class="card-header-icon card-header-icon-warning">
+                  <i class="pi pi-bolt"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-slate-900">Nivel de energía</span>
+                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
+                </div>
+              </div>
+            </ng-template>
+            <p-selectbutton 
+              [options]="energyOptions" 
+              [(ngModel)]="energyValue"
+              (onChange)="setEnergy($event.value)"
+              optionLabel="label"
+              optionValue="value"
+              styleClass="w-full energy-selector"
+            />
+          </p-card>
+
+          <p-card styleClass="section-card">
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <div class="card-header-icon card-header-icon-info">
+                  <i class="pi pi-heart"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-slate-900">Apetito</span>
+                  <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
+                </div>
+              </div>
+            </ng-template>
+            <p-selectbutton 
+              [options]="appetiteOptions" 
+              [(ngModel)]="appetiteValue"
+              (onChange)="setAppetite($event.value)"
+              optionLabel="label"
+              optionValue="value"
+              styleClass="w-full appetite-selector"
+            />
+          </p-card>
         </div>
       </div>
 
-      <p-card styleClass="section-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <div class="card-header-icon">
-              <i class="pi pi-utensils"></i>
+      <!-- Mobile-only: stacked layout (default, hidden on lg+) -->
+      <div class="lg:hidden flex flex-col gap-4">
+        <div class="summary-hero">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="hero-icon">
+                <i class="pi pi-sun"></i>
+              </div>
+              <div>
+                <h3 class="hero-title">Resumen del día</h3>
+                <p class="hero-subtitle">{{ todaySummary() }}</p>
+              </div>
             </div>
-            <div>
-              <span class="font-bold text-sm sm:text-base text-slate-900">Comidas del día</span>
-              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
+            <div class="flex gap-1.5 sm:gap-2">
+              @for (meal of mealOptions; track meal.key) {
+                @if (isMealActive(meal.key)) {
+                  <div class="chip-meal" [style.background]="meal.bgColor">
+                    <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
+                  </div>
+                }
+              }
             </div>
           </div>
-        </ng-template>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          @for (meal of mealOptions; track meal.key) {
-            <p-button
-              [label]="meal.label"
-              [icon]="'pi ' + meal.icon"
-              [severity]="isMealActive(meal.key) ? 'success' : 'secondary'"
-              (onClick)="toggleMeal(meal.key)"
-              styleClass="meal-btn w-full"
-              [attr.data-active]="isMealActive(meal.key)"
-            />
-          }
         </div>
-      </p-card>
 
-      <p-card styleClass="section-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <div class="card-header-icon card-header-icon-success">
-              <i class="pi pi-directions-run"></i>
+        <p-card styleClass="section-card">
+          <ng-template pTemplate="header">
+            <div class="card-header">
+              <div class="card-header-icon">
+                <i class="pi pi-utensils"></i>
+              </div>
+              <div>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Comidas del día</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
+              </div>
             </div>
-            <div>
-              <span class="font-bold text-sm sm:text-base text-slate-900">Actividad física</span>
-              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
-            </div>
+          </ng-template>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            @for (meal of mealOptions; track meal.key) {
+              <p-button
+                [label]="meal.label"
+                [icon]="'pi ' + meal.icon"
+                [severity]="isMealActive(meal.key) ? 'success' : 'secondary'"
+                (onClick)="toggleMeal(meal.key)"
+                styleClass="meal-btn w-full"
+                [attr.data-active]="isMealActive(meal.key)"
+              />
+            }
           </div>
-        </ng-template>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          @for (activity of activityOptions; track activity.value) {
-            <p-button
-              [label]="activity.label"
-              [icon]="'pi ' + activity.icon"
-              [severity]="isActivityActive(activity.value) ? 'success' : 'secondary'"
-              (onClick)="setActivity(activity.value)"
-              styleClass="activity-btn w-full"
-            />
-          }
-        </div>
-      </p-card>
+        </p-card>
 
-      <p-card styleClass="section-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <div class="card-header-icon card-header-icon-warning">
-              <i class="pi pi-bolt"></i>
+        <p-card styleClass="section-card">
+          <ng-template pTemplate="header">
+            <div class="card-header">
+              <div class="card-header-icon card-header-icon-success">
+                <i class="pi pi-directions-run"></i>
+              </div>
+              <div>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Actividad física</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
+              </div>
             </div>
-            <div>
-              <span class="font-bold text-sm sm:text-base text-slate-900">Nivel de energía</span>
-              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
-            </div>
+          </ng-template>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            @for (activity of activityOptions; track activity.value) {
+              <p-button
+                [label]="activity.label"
+                [icon]="'pi ' + activity.icon"
+                [severity]="isActivityActive(activity.value) ? 'success' : 'secondary'"
+                (onClick)="setActivity(activity.value)"
+                styleClass="activity-btn w-full"
+              />
+            }
           </div>
-        </ng-template>
-        <p-selectbutton 
-          [options]="energyOptions" 
-          [(ngModel)]="energyValue"
-          (onChange)="setEnergy($event.value)"
-          optionLabel="label"
-          optionValue="value"
-          styleClass="w-full energy-selector"
-        />
-      </p-card>
+        </p-card>
 
-      <p-card styleClass="section-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <div class="card-header-icon card-header-icon-info">
-              <i class="pi pi-heart"></i>
+        <p-card styleClass="section-card">
+          <ng-template pTemplate="header">
+            <div class="card-header">
+              <div class="card-header-icon card-header-icon-warning">
+                <i class="pi pi-bolt"></i>
+              </div>
+              <div>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Nivel de energía</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
+              </div>
             </div>
-            <div>
-              <span class="font-bold text-sm sm:text-base text-slate-900">Apetito</span>
-              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
-            </div>
-          </div>
-        </ng-template>
-        <p-selectbutton 
-          [options]="appetiteOptions" 
-          [(ngModel)]="appetiteValue"
-          (onChange)="setAppetite($event.value)"
-          optionLabel="label"
-          optionValue="value"
-          styleClass="w-full appetite-selector"
-        />
-      </p-card>
+          </ng-template>
+          <p-selectbutton 
+            [options]="energyOptions" 
+            [(ngModel)]="energyValue"
+            (onChange)="setEnergy($event.value)"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full energy-selector"
+          />
+        </p-card>
 
-      <p-card styleClass="section-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <div class="card-header-icon card-header-icon-purple">
-              <i class="pi pi-pencil"></i>
+        <p-card styleClass="section-card">
+          <ng-template pTemplate="header">
+            <div class="card-header">
+              <div class="card-header-icon card-header-icon-info">
+                <i class="pi pi-heart"></i>
+              </div>
+              <div>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Apetito</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
+              </div>
             </div>
-            <div>
-              <span class="font-bold text-sm sm:text-base text-slate-900">Notas personales</span>
-              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
+          </ng-template>
+          <p-selectbutton 
+            [options]="appetiteOptions" 
+            [(ngModel)]="appetiteValue"
+            (onChange)="setAppetite($event.value)"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full appetite-selector"
+          />
+        </p-card>
+
+        <p-card styleClass="section-card">
+          <ng-template pTemplate="header">
+            <div class="card-header">
+              <div class="card-header-icon card-header-icon-purple">
+                <i class="pi pi-pencil"></i>
+              </div>
+              <div>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Notas personales</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
+              </div>
             </div>
-          </div>
-        </ng-template>
-        <textarea 
-          pTextarea 
-          [(ngModel)]="note" 
-          (blur)="saveNote()" 
-          placeholder="¿Cómo te sientes? ¿Qué has notado hoy?"
-          [autoResize]="true" 
-          rows="3" 
-          class="w-full"
-        ></textarea>
-      </p-card>
+          </ng-template>
+          <textarea 
+            pTextarea 
+            [(ngModel)]="note" 
+            (blur)="saveNote()" 
+            placeholder="¿Cómo te sientes? ¿Qué has notado hoy?"
+            [autoResize]="true" 
+            rows="3" 
+            class="w-full"
+          ></textarea>
+        </p-card>
+      </div>
     </div>
   `,
   styles: [`
