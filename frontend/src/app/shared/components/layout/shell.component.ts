@@ -17,7 +17,7 @@ interface NavItem {
     <div class="app-shell">
       <p-toolbar class="app-header">
         <ng-template #start>
-          <div class="flex items-center gap-3">
+          <div class="header-container">
             <div class="header-logo">
               <i class="pi pi-heart-fill"></i>
             </div>
@@ -63,17 +63,35 @@ interface NavItem {
       display: contents;
     }
 
+    .header-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .header-container {
+        gap: 1rem;
+      }
+    }
+
     :host ::ng-deep .p-toolbar {
       @apply rounded-none border-0;
       background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #115e59 100%) !important;
-      padding: 1rem 1.25rem !important;
+      padding: 0.75rem 1rem !important;
       box-shadow: 0 4px 20px rgba(13, 148, 136, 0.4), inset 0 1px 0 rgba(255,255,255,0.1) !important;
     }
 
+    @media (min-width: 640px) {
+      :host ::ng-deep .p-toolbar {
+        padding: 1rem 1.25rem !important;
+      }
+    }
+
     .header-logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(10px);
       display: flex;
@@ -81,11 +99,26 @@ interface NavItem {
       justify-content: center;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.25);
       border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 640px) {
+      .header-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+      }
     }
 
     .header-logo i {
-      font-size: 22px;
+      font-size: 18px;
       color: white;
+    }
+
+    @media (min-width: 640px) {
+      .header-logo i {
+        font-size: 22px;
+      }
     }
 
     .header-titles {
@@ -97,32 +130,64 @@ interface NavItem {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      padding: 8px 16px;
+      padding: 6px 12px;
       background: rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
+      border-radius: 10px;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    @media (min-width: 640px) {
+      .header-date {
+        padding: 8px 16px;
+        border-radius: 12px;
+      }
+    }
+
     .date-day {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
       color: white;
       line-height: 1;
     }
 
+    @media (min-width: 640px) {
+      .date-day {
+        font-size: 20px;
+      }
+    }
+
     .date-month {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
       color: rgba(255, 255, 255, 0.85);
       text-transform: capitalize;
       margin-top: 2px;
     }
 
+    @media (min-width: 640px) {
+      .date-month {
+        font-size: 11px;
+      }
+    }
+
     .nav-icon-wrapper {
-      @apply w-10 h-10 rounded-xl flex items-center justify-center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: var(--nav-accent, #f1f5f9);
       transition: all 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
     }
 
     .nav-item:hover .nav-icon-wrapper {
@@ -139,13 +204,25 @@ interface NavItem {
     }
 
     .nav-item-icon {
-      @apply text-xl;
       color: var(--color-text-muted);
+      font-size: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .nav-item-icon {
+        font-size: 1.25rem;
+      }
     }
 
     .nav-item i {
-      @apply text-xl;
       color: var(--color-text-muted);
+      font-size: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .nav-item i {
+        font-size: 1.25rem;
+      }
     }
   `]
 })

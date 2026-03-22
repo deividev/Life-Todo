@@ -26,7 +26,7 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
 
       <div class="summary-hero">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3 sm:gap-4">
             <div class="hero-icon" style="background: rgba(255,255,255,0.25)">
               <i class="pi pi-chart-line"></i>
             </div>
@@ -66,8 +66,8 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
               <i class="pi pi-utensils"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Comidas registradas</span>
-              <p class="text-xs text-slate-500 mt-0.5">Últimos 30 días</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Comidas registradas</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Últimos 30 días</p>
             </div>
             @if (totalMeals() > 0) {
               <p-tag 
@@ -79,7 +79,7 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
             }
           </div>
         </ng-template>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           @for (meal of mealStats(); track meal.name) {
             <div class="stat-card">
               <div class="stat-icon-wrapper" [style.background]="meal.bgColor">
@@ -99,8 +99,8 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
               <i class="pi pi-directions-run"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Actividad semanal</span>
-              <p class="text-xs text-slate-500 mt-0.5">Distribución de tipos de actividad</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Actividad semanal</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Distribución de tipos de actividad</p>
             </div>
           </div>
         </ng-template>
@@ -112,21 +112,21 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
                   <i [class]="'pi ' + activity.icon" [style.color]="activity.color"></i>
                 </div>
                 <div class="progress-content">
-                  <div class="flex justify-between items-center mb-2">
-                    <span class="font-semibold text-sm text-slate-700">{{ activity.name }}</span>
-                    <span class="text-sm font-bold" [style.color]="activity.color">{{ activity.count }} días</span>
+                  <div class="flex justify-between items-center mb-1.5 sm:mb-2">
+                    <span class="font-semibold text-xs sm:text-sm text-slate-700">{{ activity.name }}</span>
+                    <span class="text-xs sm:text-sm font-bold" [style.color]="activity.color">{{ activity.count }} días</span>
                   </div>
                   <p-progressbar 
                     [value]="activity.percentage" 
                     [showValue]="false"
-                    [style]="{'height': '8px'}"
+                    [style]="{'height': '6px'}"
                   />
                 </div>
               </div>
             }
           </div>
         } @else {
-          <div class="empty-state py-8">
+          <div class="empty-state py-6 sm:py-8">
             <div class="empty-state-icon-wrapper">
               <i class="pi pi-chart-bar empty-state-icon"></i>
             </div>
@@ -143,12 +143,12 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
                 <i class="pi pi-sliders-h"></i>
               </div>
               <div>
-                <span class="font-bold text-base text-slate-900">Últimas medidas</span>
-                <p class="text-xs text-slate-500 mt-0.5">Datos de la semana más reciente</p>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Últimas medidas</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Datos de la semana más reciente</p>
               </div>
             </div>
           </ng-template>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-3 gap-3 sm:gap-4">
             <div class="metric-card">
               <div class="metric-icon" style="background: #dbeafe">
                 <i class="pi pi-user-edit" style="color: #3b82f6"></i>
@@ -185,38 +185,53 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .hero-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 640px) {
+      .hero-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+      }
     }
 
     .hero-icon i {
-      font-size: 26px;
+      font-size: 20px;
       color: white;
     }
 
+    @media (min-width: 640px) {
+      .hero-icon i {
+        font-size: 26px;
+      }
+    }
+
     .hero-title {
-      @apply text-lg font-bold text-white;
+      @apply text-base sm:text-lg font-bold text-white;
     }
 
     .hero-subtitle {
-      @apply text-sm text-white/80 mt-0.5;
+      @apply text-xs sm:text-sm text-white/80 mt-0.5;
     }
 
     .weight-change-badge {
-      @apply flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm;
+      @apply flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       color: white;
     }
 
     .weight-change-badge i {
-      @apply text-lg;
+      @apply text-base sm:text-lg;
     }
 
     .weight-change-badge.positive i,
@@ -230,25 +245,49 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .chart-card {
-      @apply bg-white rounded-2xl p-4 border border-slate-200;
+      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
+    @media (min-width: 640px) {
+      .chart-card {
+        @apply p-4 rounded-2xl;
+      }
+    }
+
     .chart-card canvas {
-      height: 220px !important;
+      height: 180px !important;
+    }
+
+    @media (min-width: 640px) {
+      .chart-card canvas {
+        height: 220px !important;
+      }
     }
 
     .card-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 4px 0;
     }
 
+    @media (min-width: 640px) {
+      .card-header {
+        gap: 12px;
+      }
+    }
+
     .stat-card {
-      @apply bg-white rounded-2xl p-4 border border-slate-200 text-center;
+      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200 text-center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       transition: all 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .stat-card {
+        @apply p-4 rounded-2xl;
+      }
     }
 
     .stat-card:hover {
@@ -257,53 +296,65 @@ interface ActivityStat { name: string; count: number; percentage: number; color:
     }
 
     .stat-icon-wrapper {
-      @apply w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3;
+      @apply w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .stat-icon-wrapper i {
-      @apply text-xl;
+      @apply text-lg sm:text-xl;
     }
 
     .progress-section {
-      @apply space-y-5;
+      @apply space-y-4;
+    }
+
+    @media (min-width: 640px) {
+      .progress-section {
+        @apply space-y-5;
+      }
     }
 
     .progress-row {
-      @apply flex items-start gap-3;
+      @apply flex items-start gap-2.5 sm:gap-3;
     }
 
     .progress-icon {
-      @apply w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0;
+      @apply w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0;
     }
 
     .progress-icon i {
-      @apply text-lg;
+      @apply text-base sm:text-lg;
     }
 
     .progress-content {
-      @apply flex-1 pt-1;
+      @apply flex-1 pt-0.5 sm:pt-1;
     }
 
     .metric-card {
-      @apply bg-white rounded-2xl p-4 text-center border border-slate-200;
+      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center border border-slate-200;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
+    @media (min-width: 640px) {
+      .metric-card {
+        @apply p-4 rounded-2xl;
+      }
+    }
+
     .metric-icon {
-      @apply w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2;
+      @apply w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1.5 sm:mb-2;
     }
 
     .metric-icon i {
-      @apply text-lg;
+      @apply text-base sm:text-lg;
     }
 
     .metric-value {
-      @apply text-2xl font-bold text-slate-900 tracking-tight;
+      @apply text-xl sm:text-2xl font-bold text-slate-900 tracking-tight;
     }
 
     .metric-label {
-      @apply text-xs text-slate-500 mt-1 font-semibold uppercase tracking-wide;
+      @apply text-[10px] sm:text-xs text-slate-500 mt-1 font-semibold uppercase tracking-wide;
     }
   `]
 })

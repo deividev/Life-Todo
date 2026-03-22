@@ -54,7 +54,7 @@ interface ActivityOption {
 
       <div class="summary-hero">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3 sm:gap-4">
             <div class="hero-icon">
               <i class="pi pi-sun"></i>
             </div>
@@ -63,7 +63,7 @@ interface ActivityOption {
               <p class="hero-subtitle">{{ todaySummary() }}</p>
             </div>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-1.5 sm:gap-2">
             @for (meal of mealOptions; track meal.key) {
               @if (isMealActive(meal.key)) {
                 <div class="chip-meal" [style.background]="meal.bgColor">
@@ -82,12 +82,12 @@ interface ActivityOption {
               <i class="pi pi-utensils"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Comidas del día</span>
-              <p class="text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Comidas del día</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
             </div>
           </div>
         </ng-template>
-        <div class="grid grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           @for (meal of mealOptions; track meal.key) {
             <p-button
               [label]="meal.label"
@@ -108,12 +108,12 @@ interface ActivityOption {
               <i class="pi pi-directions-run"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Actividad física</span>
-              <p class="text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Actividad física</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
             </div>
           </div>
         </ng-template>
-        <div class="grid grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           @for (activity of activityOptions; track activity.value) {
             <p-button
               [label]="activity.label"
@@ -133,8 +133,8 @@ interface ActivityOption {
               <i class="pi pi-bolt"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Nivel de energía</span>
-              <p class="text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Nivel de energía</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
             </div>
           </div>
         </ng-template>
@@ -155,8 +155,8 @@ interface ActivityOption {
               <i class="pi pi-heart"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Apetito</span>
-              <p class="text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Apetito</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
             </div>
           </div>
         </ng-template>
@@ -177,8 +177,8 @@ interface ActivityOption {
               <i class="pi pi-pencil"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Notas personales</span>
-              <p class="text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Notas personales</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
             </div>
           </div>
         </ng-template>
@@ -206,33 +206,54 @@ interface ActivityOption {
     .card-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 4px 0;
     }
 
+    @media (min-width: 640px) {
+      .card-header {
+        gap: 12px;
+      }
+    }
+
     .hero-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 640px) {
+      .hero-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+      }
     }
 
     .hero-icon i {
-      font-size: 26px;
+      font-size: 20px;
       color: white;
     }
 
+    @media (min-width: 640px) {
+      .hero-icon i {
+        font-size: 26px;
+      }
+    }
+
     .hero-title {
-      @apply text-lg font-bold text-white;
+      @apply text-base sm:text-lg font-bold text-white;
     }
 
     .hero-subtitle {
-      @apply text-sm text-white/80 mt-0.5;
+      @apply text-xs sm:text-sm text-white/80 mt-0.5;
     }
 
     :host ::ng-deep .meal-btn[data-active="true"],
@@ -241,8 +262,16 @@ interface ActivityOption {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 14px 8px !important;
-      min-height: 88px;
+      padding: 10px 4px !important;
+      min-height: 72px;
+    }
+
+    @media (min-width: 640px) {
+      :host ::ng-deep .meal-btn[data-active="true"],
+      :host ::ng-deep .activity-btn {
+        padding: 14px 8px !important;
+        min-height: 88px;
+      }
     }
 
     :host ::ng-deep .meal-btn[data-active="true"] {
@@ -259,12 +288,12 @@ interface ActivityOption {
 
     :host ::ng-deep .meal-btn .p-button-label,
     :host ::ng-deep .activity-btn .p-button-label {
-      @apply text-xs font-semibold mt-2;
+      @apply text-[10px] sm:text-xs font-semibold mt-1 sm:mt-2;
     }
 
     :host ::ng-deep .meal-btn .p-button-icon,
     :host ::ng-deep .activity-btn .p-button-icon {
-      @apply text-xl;
+      @apply text-lg sm:text-xl;
     }
 
     :host ::ng-deep .energy-selector,
@@ -282,8 +311,18 @@ interface ActivityOption {
     :host ::ng-deep .appetite-selector .p-button {
       flex: 1;
       justify-content: center;
-      padding: 14px 16px;
-      border-radius: 14px;
+      padding: 10px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      :host ::ng-deep .energy-selector .p-button,
+      :host ::ng-deep .appetite-selector .p-button {
+        padding: 14px 16px;
+        border-radius: 14px;
+        font-size: 0.875rem;
+      }
     }
 
     :host ::ng-deep .energy-selector .p-button .p-button-label,

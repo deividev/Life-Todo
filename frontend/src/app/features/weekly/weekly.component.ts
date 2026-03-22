@@ -55,8 +55,8 @@ interface MeasureInput {
               <i class="pi pi-calendar"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Seleccionar semana</span>
-              <p class="text-xs text-slate-500 mt-0.5">Elige la semana que quieres registrar</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Seleccionar semana</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Elige la semana que quieres registrar</p>
             </div>
           </div>
         </ng-template>
@@ -76,7 +76,7 @@ interface MeasureInput {
       </p-card>
 
       <div class="summary-hero">
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 sm:gap-4">
           <div class="hero-icon" style="background: rgba(255,255,255,0.25)">
             <i class="pi pi-sliders-h"></i>
           </div>
@@ -87,7 +87,7 @@ interface MeasureInput {
         </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-3 mb-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         @for (measure of measureInputs; track measure.label) {
           <div class="measure-card">
             <div class="measure-icon" [style.background]="measure.bgColor">
@@ -117,12 +117,12 @@ interface MeasureInput {
               <i class="pi pi-smile"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">¿Cómo te sientes?</span>
-              <p class="text-xs text-slate-500 mt-0.5">Compara con la semana anterior</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">¿Cómo te sientes?</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Compara con la semana anterior</p>
             </div>
           </div>
         </ng-template>
-        <div class="flex gap-3">
+        <div class="flex gap-2 sm:gap-3">
           @for (f of feelingOptions; track f.value) {
             <p-button
               [label]="f.label"
@@ -142,8 +142,8 @@ interface MeasureInput {
               <i class="pi pi-pencil"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-slate-900">Nota semanal</span>
-              <p class="text-xs text-slate-500 mt-0.5">Reflexiones sobre tu semana</p>
+              <span class="font-bold text-sm sm:text-base text-slate-900">Nota semanal</span>
+              <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Reflexiones sobre tu semana</p>
             </div>
           </div>
         </ng-template>
@@ -168,12 +168,12 @@ interface MeasureInput {
                 <i class="pi pi-chart-bar"></i>
               </div>
               <div>
-                <span class="font-bold text-base text-slate-900">Resumen de la semana</span>
-                <p class="text-xs text-slate-500 mt-0.5">Datos registrados</p>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Resumen de la semana</span>
+                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Datos registrados</p>
               </div>
             </div>
           </ng-template>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-3 gap-3 sm:gap-4">
             <div class="metric-card">
               <div class="metric-value">{{ weeklyLog()!.weightKg || '--' }}</div>
               <div class="metric-label">kg</div>
@@ -188,9 +188,9 @@ interface MeasureInput {
             </div>
           </div>
           @if (weeklyLog()!.weeklyFeeling) {
-            <div class="mt-4 pt-4 border-t border-slate-100">
+            <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100">
               <div class="flex items-center justify-center gap-2">
-                <span class="text-sm text-slate-500 font-medium">Sensación semanal:</span>
+                <span class="text-xs sm:text-sm text-slate-500 font-medium">Sensación semanal:</span>
                 <p-tag 
                   [value]="getFeelingLabel(weeklyLog()!.weeklyFeeling!)"
                   [icon]="getFeelingIcon(weeklyLog()!.weeklyFeeling!)"
@@ -219,49 +219,76 @@ interface MeasureInput {
     .card-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 4px 0;
     }
 
+    @media (min-width: 640px) {
+      .card-header {
+        gap: 12px;
+      }
+    }
+
     .hero-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 640px) {
+      .hero-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+      }
     }
 
     .hero-icon i {
-      font-size: 26px;
+      font-size: 20px;
       color: white;
     }
 
+    @media (min-width: 640px) {
+      .hero-icon i {
+        font-size: 26px;
+      }
+    }
+
     .hero-title {
-      @apply text-lg font-bold text-white;
+      @apply text-base sm:text-lg font-bold text-white;
     }
 
     .hero-subtitle {
-      @apply text-sm text-white/80 mt-0.5;
+      @apply text-xs sm:text-sm text-white/80 mt-0.5;
     }
 
     .measure-card {
-      @apply bg-white rounded-2xl p-4 border border-slate-200 text-center;
+      @apply bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200 text-center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
+    @media (min-width: 640px) {
+      .measure-card {
+        @apply p-4 rounded-2xl;
+      }
+    }
+
     .measure-icon {
-      @apply w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2;
+      @apply w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2;
     }
 
     .measure-icon i {
-      @apply text-lg;
+      @apply text-base sm:text-lg;
     }
 
     .measure-label {
-      @apply text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 block;
+      @apply text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 block;
     }
 
     :host ::ng-deep .feeling-btn {
@@ -269,16 +296,23 @@ interface MeasureInput {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px 12px;
-      min-height: 88px;
+      padding: 12px 8px;
+      min-height: 72px;
+    }
+
+    @media (min-width: 640px) {
+      :host ::ng-deep .feeling-btn {
+        padding: 16px 12px;
+        min-height: 88px;
+      }
     }
 
     :host ::ng-deep .feeling-btn .p-button-label {
-      @apply text-sm font-semibold mt-2;
+      @apply text-xs sm:text-sm font-semibold mt-1 sm:mt-2;
     }
 
     :host ::ng-deep .feeling-btn .p-button-icon {
-      @apply text-2xl;
+      @apply text-xl sm:text-2xl;
     }
 
     :host ::ng-deep .feeling-btn.p-button-warn {
