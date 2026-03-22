@@ -5,13 +5,25 @@ import { Button } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { Textarea } from 'primeng/textarea';
 import { Tag } from 'primeng/tag';
-import { Badge } from 'primeng/badge';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
-import { Divider } from 'primeng/divider';
 import { DailyLogService } from '../../core/services/daily-log.service';
 import { DailyLog, ActivityType, EnergyLevel, AppetiteLevel } from '../../core/models/daily-log.model';
 import { getCurrentDateMadrid } from '../../shared/utils/timezone';
+
+interface MealOption {
+  key: 'breakfast' | 'lunch' | 'snack' | 'dinner';
+  label: string;
+  icon: string;
+  bgColor: string;
+  iconColor: string;
+}
+
+interface ActivityOption {
+  value: ActivityType;
+  label: string;
+  icon: string;
+  color: string;
+  bgColor: string;
+}
 
 @Component({
   selector: 'app-today',
@@ -22,9 +34,7 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
     Button, 
     SelectButton, 
     Textarea, 
-    Tag, 
-    IconField,
-    InputIcon
+    Tag
   ],
   template: `
     <div class="animate-fade-in">
@@ -33,35 +43,37 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
           <h2 class="page-title">{{ greeting() }}</h2>
           <p class="page-subtitle capitalize">{{ formattedDate() }}</p>
         </div>
-        @if (saving() || saved()) {
-          <p-tag 
-            [value]="saving() ? 'Guardando...' : 'Guardado'" 
-            [severity]="saving() ? 'warn' : 'success'"
-            [icon]="saving() ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
-          />
-        }
+        <p-tag 
+          [value]="saving() ? 'Guardando...' : saved() ? 'Guardado' : ''" 
+          [severity]="saving() ? 'warn' : 'success'"
+          [icon]="saving() ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+          [style.visibility]="saving() || saved() ? 'visible' : 'hidden'"
+          styleClass="shadow-sm"
+        />
       </div>
 
-      <p-card styleClass="summary-card">
-        <div class="summary-content">
-          <div class="summary-icon">
-            <i class="pi pi-sun"></i>
+      <div class="summary-hero">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="hero-icon">
+              <i class="pi pi-sun"></i>
+            </div>
+            <div>
+              <h3 class="hero-title">Resumen del día</h3>
+              <p class="hero-subtitle">{{ todaySummary() }}</p>
+            </div>
           </div>
-          <div class="summary-info">
-            <span class="summary-title">Resumen del día</span>
-            <span class="summary-subtitle">{{ todaySummary() }}</span>
-          </div>
-          <div class="summary-badges">
+          <div class="flex gap-2">
             @for (meal of mealOptions; track meal.key) {
               @if (isMealActive(meal.key)) {
-                <span class="meal-badge" [style.background]="meal.bgColor">
-                  <i [class]="'pi ' + meal.icon"></i>
-                </span>
+                <div class="chip-meal" [style.background]="meal.bgColor">
+                  <i [class]="'pi ' + meal.icon" [style.color]="meal.iconColor"></i>
+                </div>
               }
             }
           </div>
         </div>
-      </p-card>
+      </div>
 
       <p-card styleClass="section-card">
         <ng-template pTemplate="header">
@@ -70,8 +82,8 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
               <i class="pi pi-utensils"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-text">Comidas</span>
-              <p class="text-xs text-text-muted mt-0.5">Selecciona las que has tomado</p>
+              <span class="font-bold text-base text-slate-900">Comidas del día</span>
+              <p class="text-xs text-slate-500 mt-0.5">Toca para marcar las que has tomado</p>
             </div>
           </div>
         </ng-template>
@@ -80,11 +92,10 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
             <p-button
               [label]="meal.label"
               [icon]="'pi ' + meal.icon"
-              [severity]="isMealActive(meal.key) ? 'primary' : 'secondary'"
-              [outlined]="!isMealActive(meal.key)"
+              [severity]="isMealActive(meal.key) ? 'success' : 'secondary'"
               (onClick)="toggleMeal(meal.key)"
               styleClass="meal-btn w-full"
-              [style.--p-button-border-radius]="'16px'"
+              [attr.data-active]="isMealActive(meal.key)"
             />
           }
         </div>
@@ -93,12 +104,12 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
       <p-card styleClass="section-card">
         <ng-template pTemplate="header">
           <div class="card-header">
-            <div class="card-header-icon" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
-              <i class="pi pi-directions-run" style="color: #16a34a;"></i>
+            <div class="card-header-icon card-header-icon-success">
+              <i class="pi pi-directions-run"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-text">Actividad física</span>
-              <p class="text-xs text-text-muted mt-0.5">¿Qué has hecho hoy?</p>
+              <span class="font-bold text-base text-slate-900">Actividad física</span>
+              <p class="text-xs text-slate-500 mt-0.5">¿Qué has hecho hoy?</p>
             </div>
           </div>
         </ng-template>
@@ -108,7 +119,6 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
               [label]="activity.label"
               [icon]="'pi ' + activity.icon"
               [severity]="isActivityActive(activity.value) ? 'success' : 'secondary'"
-              [outlined]="!isActivityActive(activity.value)"
               (onClick)="setActivity(activity.value)"
               styleClass="activity-btn w-full"
             />
@@ -119,10 +129,13 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
       <p-card styleClass="section-card">
         <ng-template pTemplate="header">
           <div class="card-header">
-            <div class="card-header-icon" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
-              <i class="pi pi-bolt" style="color: #d97706;"></i>
+            <div class="card-header-icon card-header-icon-warning">
+              <i class="pi pi-bolt"></i>
             </div>
-            <span class="font-bold text-base text-text">Energía</span>
+            <div>
+              <span class="font-bold text-base text-slate-900">Nivel de energía</span>
+              <p class="text-xs text-slate-500 mt-0.5">¿Cómo te sientes hoy?</p>
+            </div>
           </div>
         </ng-template>
         <p-selectbutton 
@@ -131,17 +144,20 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
           (onChange)="setEnergy($event.value)"
           optionLabel="label"
           optionValue="value"
-          styleClass="energy-selector"
+          styleClass="w-full energy-selector"
         />
       </p-card>
 
       <p-card styleClass="section-card">
         <ng-template pTemplate="header">
           <div class="card-header">
-            <div class="card-header-icon" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
-              <i class="pi pi-heart" style="color: #2563eb;"></i>
+            <div class="card-header-icon card-header-icon-info">
+              <i class="pi pi-heart"></i>
             </div>
-            <span class="font-bold text-base text-text">Apetito</span>
+            <div>
+              <span class="font-bold text-base text-slate-900">Apetito</span>
+              <p class="text-xs text-slate-500 mt-0.5">¿Cómo ha sido tu hambre hoy?</p>
+            </div>
           </div>
         </ng-template>
         <p-selectbutton 
@@ -150,34 +166,31 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
           (onChange)="setAppetite($event.value)"
           optionLabel="label"
           optionValue="value"
-          styleClass="appetite-selector"
+          styleClass="w-full appetite-selector"
         />
       </p-card>
 
       <p-card styleClass="section-card">
         <ng-template pTemplate="header">
           <div class="card-header">
-            <div class="card-header-icon" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);">
-              <i class="pi pi-pencil" style="color: #9333ea;"></i>
+            <div class="card-header-icon card-header-icon-purple">
+              <i class="pi pi-pencil"></i>
             </div>
             <div>
-              <span class="font-bold text-base text-text">Notas</span>
-              <p class="text-xs text-text-muted mt-0.5">¿Cómo te sientes hoy?</p>
+              <span class="font-bold text-base text-slate-900">Notas personales</span>
+              <p class="text-xs text-slate-500 mt-0.5">Reflexiones sobre tu día</p>
             </div>
           </div>
         </ng-template>
-        <p-iconfield>
-          <p-inputicon class="pi pi-pencil" style="color: var(--color-text-muted);"/>
-          <textarea 
-            pTextarea 
-            [(ngModel)]="note" 
-            (blur)="saveNote()" 
-            placeholder="Escribe cómo te sientes, qué has notado..."
-            [autoResize]="true" 
-            rows="3" 
-            class="w-full"
-          ></textarea>
-        </p-iconfield>
+        <textarea 
+          pTextarea 
+          [(ngModel)]="note" 
+          (blur)="saveNote()" 
+          placeholder="¿Cómo te sientes? ¿Qué has notado hoy?"
+          [autoResize]="true" 
+          rows="3" 
+          class="w-full"
+        ></textarea>
       </p-card>
     </div>
   `,
@@ -186,75 +199,8 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
       display: block;
     }
 
-    .summary-card {
-      background: linear-gradient(135deg, var(--color-primary-light) 0%, white 100%) !important;
-      border: 1px solid rgba(13, 148, 136, 0.2) !important;
-      box-shadow: 0 4px 20px rgba(13, 148, 136, 0.15) !important;
-    }
-
-    .summary-content {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .summary-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
-    }
-
-    .summary-icon i {
-      font-size: 24px;
-      color: white;
-    }
-
-    .summary-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .summary-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--color-text);
-    }
-
-    .summary-subtitle {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      font-weight: 500;
-    }
-
-    .summary-badges {
-      display: flex;
-      gap: 8px;
-    }
-
-    .meal-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .meal-badge i {
-      font-size: 14px;
-      color: var(--color-text-secondary);
-    }
-
     .section-card {
-      margin-bottom: 16px;
+      @apply mb-4;
     }
 
     .card-header {
@@ -264,42 +210,61 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
       padding: 4px 0;
     }
 
-    .card-header-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(204, 251, 241, 0.5) 100%);
+    .hero-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
     }
 
-    .card-header-icon i {
-      font-size: 18px;
-      color: var(--color-primary);
+    .hero-icon i {
+      font-size: 26px;
+      color: white;
     }
 
-    :host ::ng-deep .meal-btn,
+    .hero-title {
+      @apply text-lg font-bold text-white;
+    }
+
+    .hero-subtitle {
+      @apply text-sm text-white/80 mt-0.5;
+    }
+
+    :host ::ng-deep .meal-btn[data-active="true"],
     :host ::ng-deep .activity-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px 8px !important;
-      min-height: 90px;
+      padding: 14px 8px !important;
+      min-height: 88px;
+    }
+
+    :host ::ng-deep .meal-btn[data-active="true"] {
+      @apply bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-500 text-white shadow-md;
+    }
+
+    :host ::ng-deep .meal-btn[data-active="true"]:hover {
+      @apply from-emerald-600 to-emerald-700;
+    }
+
+    :host ::ng-deep .activity-btn.p-button-success {
+      @apply bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-500 text-white shadow-md;
     }
 
     :host ::ng-deep .meal-btn .p-button-label,
     :host ::ng-deep .activity-btn .p-button-label {
-      font-size: 11px;
-      font-weight: 600;
-      margin-top: 6px;
+      @apply text-xs font-semibold mt-2;
     }
 
     :host ::ng-deep .meal-btn .p-button-icon,
     :host ::ng-deep .activity-btn .p-button-icon {
-      font-size: 20px;
+      @apply text-xl;
     }
 
     :host ::ng-deep .energy-selector,
@@ -348,18 +313,18 @@ export class TodayComponent {
     appetite: 'normal'
   });
 
-  mealOptions = [
-    { key: 'breakfast' as const, label: 'Desayuno', icon: 'pi-sun', bgColor: '#fef3c7' },
-    { key: 'lunch' as const, label: 'Almuerzo', icon: 'pi-coffee', bgColor: '#fed7aa' },
-    { key: 'snack' as const, label: 'Merienda', icon: 'pi-briefcase', bgColor: '#e9d5ff' },
-    { key: 'dinner' as const, label: 'Cena', icon: 'pi-moon', bgColor: '#dbeafe' }
+  mealOptions: MealOption[] = [
+    { key: 'breakfast', label: 'Desayuno', icon: 'pi-sun', bgColor: '#fef3c7', iconColor: '#d97706' },
+    { key: 'lunch', label: 'Almuerzo', icon: 'pi-coffee', bgColor: '#fed7aa', iconColor: '#c2410c' },
+    { key: 'snack', label: 'Merienda', icon: 'pi-briefcase', bgColor: '#e9d5ff', iconColor: '#7c3aed' },
+    { key: 'dinner', label: 'Cena', icon: 'pi-moon', bgColor: '#dbeafe', iconColor: '#2563eb' }
   ];
 
-  activityOptions = [
-    { value: 'none' as ActivityType, label: 'Ninguna', icon: 'pi-minus' },
-    { value: 'walk' as ActivityType, label: 'Paseo', icon: 'pi-directions-walk' },
-    { value: 'exercise' as ActivityType, label: 'Ejercicio', icon: 'pi-bolt' },
-    { value: 'walk_and_exercise' as ActivityType, label: 'Ambos', icon: 'pi-star' }
+  activityOptions: ActivityOption[] = [
+    { value: 'none', label: 'Ninguna', icon: 'pi-minus', color: '#64748b', bgColor: '#f1f5f9' },
+    { value: 'walk', label: 'Paseo', icon: 'pi-directions-walk', color: '#10b981', bgColor: '#d1fae5' },
+    { value: 'exercise', label: 'Ejercicio', icon: 'pi-bolt', color: '#f59e0b', bgColor: '#fef3c7' },
+    { value: 'walk_and_exercise', label: 'Ambos', icon: 'pi-star', color: '#6366f1', bgColor: '#e0e7ff' }
   ];
 
   energyOptions = [
@@ -392,15 +357,10 @@ export class TodayComponent {
 
   todaySummary = computed(() => {
     const meals = ['breakfast', 'lunch', 'snack', 'dinner'].filter(m => (this.log() as any)[m]);
-    if (meals.length === 0) return 'No has registrado nada todavía';
-    if (meals.length === 4) return '¡Día completo! Todo registrado';
+    if (meals.length === 0) return 'Sin registrar todavía';
+    if (meals.length === 4) return 'Día completo - ¡Genial!';
     return `${meals.length} de 4 comidas registradas`;
   });
-
-  hasAnyMeal(): boolean {
-    const l = this.log();
-    return !!(l.breakfast || l.lunch || l.snack || l.dinner);
-  }
 
   constructor() {
     this.loadTodayLog();
