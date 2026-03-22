@@ -9,19 +9,37 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
   standalone: true,
   imports: [FormsModule],
   template: `
-    <div class="space-y-6">
+    <div class="space-y-5">
       <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold">{{ formattedDate() }}</h2>
-        @if (saving()) {
-          <span class="text-sm text-text-muted">Guardando...</span>
-        } @else if (saved()) {
-          <span class="text-sm text-success">Guardado</span>
-        }
+        <div>
+          <h2 class="text-2xl font-bold text-text">{{ formattedDate() }}</h2>
+          <p class="text-sm text-text-muted mt-0.5">{{ greeting() }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          @if (saving()) {
+            <div class="flex items-center gap-2 text-text-muted text-sm">
+              <div class="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+              Guardando
+            </div>
+          } @else if (saved()) {
+            <div class="flex items-center gap-1.5 text-success text-sm font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Guardado
+            </div>
+          }
+        </div>
       </div>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3 flex items-center gap-2">
-          <span class="text-xl">🍽️</span> Comidas
+      <section class="card">
+        <h3 class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+            <path d="M7 2v20"></path>
+            <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+          </svg>
+          Comidas del día
         </h3>
         <div class="grid grid-cols-2 gap-3">
           @for (meal of meals; track meal.key) {
@@ -29,16 +47,24 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
               (click)="toggleMeal(meal.key)"
               [class]="mealClasses(meal.key)"
             >
-              <span class="text-2xl mb-1">{{ meal.icon }}</span>
-              <span class="block text-sm">{{ meal.label }}</span>
+              <span class="text-3xl mb-1.5 block">{{ meal.icon }}</span>
+              <span class="block text-sm font-medium">{{ meal.label }}</span>
+              @if (isMealActive(meal.key)) {
+                <span class="mt-1.5 w-2 h-2 rounded-full bg-primary block mx-auto"></span>
+              }
             </button>
           }
         </div>
       </section>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3 flex items-center gap-2">
-          <span class="text-xl">🏃</span> Actividad
+      <section class="card">
+        <h3 class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 16 4-4-4-4"></path>
+            <path d="m6 8-4 4 4 4"></path>
+            <path d="m14.5 4-5 16"></path>
+          </svg>
+          Actividad física
         </h3>
         <div class="grid grid-cols-2 gap-2">
           @for (activity of activities; track activity.value) {
@@ -46,18 +72,22 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
               (click)="setActivity(activity.value)"
               [class]="activityClasses(activity.value)"
             >
-              {{ activity.label }}
+              <span class="text-xl mb-0.5 block">{{ activity.icon }}</span>
+              <span class="text-sm font-medium">{{ activity.label }}</span>
             </button>
           }
         </div>
       </section>
 
       <div class="grid grid-cols-2 gap-4">
-        <section class="bg-surface rounded-2xl p-4 shadow-sm">
-          <h3 class="font-semibold mb-3 flex items-center gap-2">
-            <span class="text-xl">⚡</span> Energía
+        <section class="card">
+          <h3 class="card-header text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Energía
           </h3>
-          <div class="flex gap-2">
+          <div class="flex gap-1.5">
             @for (level of energyLevels; track level.value) {
               <button
                 (click)="setEnergy(level.value)"
@@ -69,11 +99,17 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
           </div>
         </section>
 
-        <section class="bg-surface rounded-2xl p-4 shadow-sm">
-          <h3 class="font-semibold mb-3 flex items-center gap-2">
-            <span class="text-xl">🍴</span> Apetito
+        <section class="card">
+          <h3 class="card-header text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12h6"></path>
+              <path d="M22 12h-6"></path>
+              <path d="M12 2v6"></path>
+              <path d="M12 22v-6"></path>
+            </svg>
+            Apetito
           </h3>
-          <div class="flex gap-2">
+          <div class="flex gap-1.5">
             @for (level of appetiteLevels; track level.value) {
               <button
                 (click)="setAppetite(level.value)"
@@ -86,16 +122,20 @@ import { getCurrentDateMadrid } from '../../shared/utils/timezone';
         </section>
       </div>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3 flex items-center gap-2">
-          <span class="text-xl">📝</span> Nota
+      <section class="card">
+        <h3 class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          Notas
         </h3>
         <textarea
           [(ngModel)]="note"
           (blur)="saveNote()"
-          placeholder="¿Cómo te sientes hoy?"
+          placeholder="¿Cómo te sientes hoy? ¿Algo relevante que recordar?"
           rows="3"
-          class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition resize-none"
+          class="input-field resize-none"
         ></textarea>
       </section>
     </div>
@@ -127,11 +167,11 @@ export class TodayComponent {
     { key: 'dinner' as const, label: 'Cena', icon: '🌙' }
   ];
 
-  activities: { value: ActivityType; label: string }[] = [
-    { value: 'none', label: 'Ninguna' },
-    { value: 'walk', label: 'Paseo' },
-    { value: 'exercise', label: 'Ejercicio' },
-    { value: 'walk_and_exercise', label: 'Ambos' }
+  activities: { value: ActivityType; label: string; icon: string }[] = [
+    { value: 'none', label: 'Ninguna', icon: '🚫' },
+    { value: 'walk', label: 'Paseo', icon: '🚶' },
+    { value: 'exercise', label: 'Ejercicio', icon: '🏋️' },
+    { value: 'walk_and_exercise', label: 'Ambos', icon: '💪' }
   ];
 
   energyLevels: { value: EnergyLevel; label: string }[] = [
@@ -145,6 +185,13 @@ export class TodayComponent {
     { value: 'normal', label: 'Normal' },
     { value: 'high', label: 'Alto' }
   ];
+
+  greeting = computed(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Buenos días';
+    if (hour < 18) return 'Buenas tardes';
+    return 'Buenas noches';
+  });
 
   formattedDate = computed(() => {
     const date = new Date(this.currentDate + 'T00:00:00');
@@ -219,20 +266,14 @@ export class TodayComponent {
   mealClasses(key: string): string {
     const isActive = (this.log() as any)[key];
     return `
-      flex flex-col items-center justify-center p-4 rounded-xl border-2 transition
-      ${isActive 
-        ? 'border-primary bg-primary/10 text-primary' 
-        : 'border-border bg-background text-text-muted hover:border-primary/50'}
+      btn-option ${isActive ? 'btn-option-active' : ''}
     `;
   }
 
   activityClasses(value: string): string {
     const isActive = this.log().activityType === value;
     return `
-      py-3 px-4 rounded-xl border-2 transition text-sm font-medium
-      ${isActive 
-        ? 'border-primary bg-primary/10 text-primary' 
-        : 'border-border bg-background text-text-muted hover:border-primary/50'}
+      btn-option py-3 ${isActive ? 'btn-option-active' : ''}
     `;
   }
 
@@ -240,10 +281,11 @@ export class TodayComponent {
     const currentValue = type === 'energy' ? this.log().energy : this.log().appetite;
     const isActive = currentValue === value;
     return `
-      flex-1 py-2 px-3 rounded-lg border-2 transition text-sm font-medium text-center
-      ${isActive 
-        ? 'border-primary bg-primary/10 text-primary' 
-        : 'border-border bg-background text-text-muted hover:border-primary/50'}
+      btn-selector ${isActive ? 'btn-selector-active' : ''}
     `;
+  }
+
+  isMealActive(key: string): boolean {
+    return !!(this.log() as any)[key];
   }
 }

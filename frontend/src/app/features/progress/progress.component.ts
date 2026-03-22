@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, inject, signal, OnInit, AfterViewInit, ElementRef, ViewChild, effect } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { ProgressService } from '../../core/services/progress.service';
 
@@ -6,98 +6,144 @@ Chart.register(...registerables);
 
 interface WeightData { week: string; weight: number }
 interface MealStat { name: string; icon: string; count: number }
-interface ActivityStat { name: string; count: number; percentage: number }
+interface ActivityStat { name: string; count: number; percentage: number; color: string }
 
 @Component({
   selector: 'app-progress',
   standalone: true,
   imports: [],
   template: `
-    <div class="space-y-6">
-      <h2 class="text-xl font-bold">Progreso</h2>
+    <div class="space-y-5">
+      <div>
+        <h2 class="text-2xl font-bold text-text">Tu Progreso</h2>
+        <p class="text-sm text-text-muted mt-0.5">Últimas 12 semanas</p>
+      </div>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-4 flex items-center gap-2">
-          <span class="text-xl">📊</span> Peso Semanal
-        </h3>
+      <section class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="card-header text-xs m-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"></path>
+              <path d="m19 9-5 5-4-4-3 3"></path>
+            </svg>
+            Evolución de peso
+          </h3>
+          @if (weightChange() !== null) {
+            <div class="flex items-center gap-1 text-sm font-medium" [class.text-success]="weightChange()! < 0" [class.text-danger]="weightChange()! > 0">
+              @if (weightChange()! < 0) {
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              } @else if (weightChange()! > 0) {
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+              }
+              {{ weightChange()! > 0 ? '+' : '' }}{{ weightChange() }} kg
+            </div>
+          }
+        </div>
         @if (weightData().length > 0) {
-          <div class="h-64">
+          <div class="h-56">
             <canvas #weightChart></canvas>
           </div>
         } @else {
-          <div class="h-64 flex items-center justify-center text-text-muted">
-            <p>No hay datos de peso registrados</p>
+          <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <p class="empty-state-text">Registra tu peso semanalmente para ver la evolución</p>
           </div>
         }
       </section>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-4 flex items-center gap-2">
-          <span class="text-xl">🍽️</span> Resumen de Comidas
+      <section class="card">
+        <h3 class="card-header text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+            <path d="M7 2v20"></path>
+            <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+          </svg>
+          Comidas (últimos 30 días)
         </h3>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           @for (meal of mealStats(); track meal.name) {
-            <div class="bg-background rounded-xl p-4 text-center">
-              <div class="text-3xl mb-1">{{ meal.icon }}</div>
-              <div class="text-2xl font-bold text-primary">{{ meal.count }}</div>
-              <div class="text-sm text-text-muted">{{ meal.name }}</div>
+            <div class="bg-gradient-to-br from-surface to-background rounded-xl p-4 border border-border/50">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">{{ meal.icon }}</span>
+                <div class="flex-1">
+                  <div class="text-2xl font-bold text-text">{{ meal.count }}</div>
+                  <div class="text-xs text-text-muted">{{ meal.name }}</div>
+                </div>
+              </div>
             </div>
           }
         </div>
-        <div class="mt-4 text-center text-text-muted text-sm">
-          Últimos 30 días • {{ totalMeals() }} comidas registradas
-        </div>
+        @if (totalMeals() > 0) {
+          <div class="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-sm">
+            <span class="text-text-muted">Total registrado</span>
+            <span class="font-semibold text-primary">{{ totalMeals() }} comidas</span>
+          </div>
+        }
       </section>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-4 flex items-center gap-2">
-          <span class="text-xl">🏃</span> Actividad Semanal
+      <section class="card">
+        <h3 class="card-header text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 16 4-4-4-4"></path>
+            <path d="m6 8-4 4 4 4"></path>
+            <path d="m14.5 4-5 16"></path>
+          </svg>
+          Actividad semanal
         </h3>
         @if (activityStats().length > 0) {
-          <div class="space-y-3">
+          <div class="space-y-4">
             @for (activity of activityStats(); track activity.name) {
               <div>
-                <div class="flex justify-between text-sm mb-1">
-                  <span>{{ activity.name }}</span>
-                  <span class="text-text-muted">{{ activity.count }} días</span>
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="flex items-center gap-2">
+                    <span>{{ activity.name }}</span>
+                  </span>
+                  <span class="text-text-muted font-medium">{{ activity.count }} días</span>
                 </div>
-                <div class="h-2 bg-background rounded-full overflow-hidden">
+                <div class="h-3 bg-background rounded-full overflow-hidden">
                   <div 
-                    class="h-full bg-primary rounded-full transition-all"
+                    class="h-full rounded-full transition-all duration-500"
                     [style.width.%]="activity.percentage"
+                    [style.background-color]="activity.color"
                   ></div>
                 </div>
               </div>
             }
           </div>
         } @else {
-          <p class="text-text-muted text-center py-4">No hay datos de actividad</p>
+          <div class="empty-state py-6">
+            <div class="empty-state-icon text-3xl">🏃</div>
+            <p class="empty-state-text mt-2">Registra tu actividad para ver estadísticas</p>
+          </div>
         }
       </section>
 
       @if (latestWeekly()) {
-        <section class="bg-surface rounded-2xl p-4 shadow-sm">
-          <h3 class="font-semibold mb-4 flex items-center gap-2">
-            <span class="text-xl">📏</span> Últimas Medidas
+        <section class="card">
+          <h3 class="card-header text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2v20"></path>
+              <path d="M18 2v20"></path>
+              <path d="M6 12h12"></path>
+            </svg>
+            Últimas medidas
           </h3>
-          <div class="grid grid-cols-3 gap-4 text-center">
-            <div class="bg-background rounded-xl p-3">
-              <div class="text-2xl font-bold text-primary">
-                {{ latestWeekly()!.weightKg || '-' }}
-              </div>
-              <div class="text-xs text-text-muted">kg</div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="metric-card">
+              <div class="metric-value text-xl">{{ latestWeekly()!.weightKg || '--' }}</div>
+              <div class="metric-label">kg</div>
             </div>
-            <div class="bg-background rounded-xl p-3">
-              <div class="text-2xl font-bold text-primary">
-                {{ latestWeekly()!.waistCm || '-' }}
-              </div>
-              <div class="text-xs text-text-muted">cintura</div>
+            <div class="metric-card">
+              <div class="metric-value text-xl">{{ latestWeekly()!.waistCm || '--' }}</div>
+              <div class="metric-label">cintura</div>
             </div>
-            <div class="bg-background rounded-xl p-3">
-              <div class="text-2xl font-bold text-primary">
-                {{ latestWeekly()!.armCm || '-' }}
-              </div>
-              <div class="text-xs text-text-muted">brazo</div>
+            <div class="metric-card">
+              <div class="metric-value text-xl">{{ latestWeekly()!.armCm || '--' }}</div>
+              <div class="metric-label">brazo</div>
             </div>
           </div>
         </section>
@@ -110,6 +156,7 @@ export class ProgressComponent implements OnInit, AfterViewInit {
 
   private progressService = inject(ProgressService);
   private chart: Chart | null = null;
+  private chartInitialized = signal(false);
   
   weightData = signal<WeightData[]>([]);
   mealStats = signal<MealStat[]>([]);
@@ -117,11 +164,29 @@ export class ProgressComponent implements OnInit, AfterViewInit {
   totalMeals = signal(0);
   latestWeekly = signal<any>(null);
 
+  weightChange = signal<number | null>(null);
+
+  private activityColors: Record<string, string> = {
+    'Ninguna': '#94a3b8',
+    'Paseo': '#22c55e',
+    'Ejercicio': '#3b82f6',
+    'Ambos': '#8b5cf6'
+  };
+
+  constructor() {
+    effect(() => {
+      if (this.chartInitialized() && this.weightChartRef) {
+        this.renderChart();
+      }
+    });
+  }
+
   ngOnInit() {
     this.loadData();
   }
 
   ngAfterViewInit() {
+    this.chartInitialized.set(true);
     this.renderChart();
   }
 
@@ -151,9 +216,16 @@ export class ProgressComponent implements OnInit, AfterViewInit {
           Object.entries(actStats).map(([key, count]) => ({
             name: labels[key] || key,
             count: count as number,
-            percentage: Math.round(((count as number) / total) * 100)
+            percentage: Math.round(((count as number) / total) * 100),
+            color: this.activityColors[labels[key] || key] || '#10b981'
           }))
         );
+
+        if (data.weightData && data.weightData.length >= 2) {
+          const first = data.weightData[0].weight;
+          const last = data.weightData[data.weightData.length - 1].weight;
+          this.weightChange.set(Math.round((last - first) * 10) / 10);
+        }
 
         setTimeout(() => this.renderChart(), 100);
       },
@@ -186,9 +258,12 @@ export class ProgressComponent implements OnInit, AfterViewInit {
           borderColor: '#10b981',
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
           fill: true,
-          tension: 0.3,
-          pointRadius: 4,
-          pointBackgroundColor: '#10b981'
+          tension: 0.4,
+          pointRadius: 5,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#10b981',
+          pointBorderWidth: 2,
+          pointHoverRadius: 7
         }]
       },
       options: {
@@ -197,6 +272,17 @@ export class ProgressComponent implements OnInit, AfterViewInit {
         plugins: {
           legend: {
             display: false
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#ffffff',
+            bodyColor: '#94a3b8',
+            padding: 12,
+            cornerRadius: 8,
+            displayColors: false,
+            callbacks: {
+              label: (context) => `${context.parsed.y} kg`
+            }
           }
         },
         scales: {
@@ -204,11 +290,19 @@ export class ProgressComponent implements OnInit, AfterViewInit {
             beginAtZero: false,
             grid: {
               color: 'rgba(0,0,0,0.05)'
+            },
+            ticks: {
+              color: '#64748b',
+              font: { size: 11 }
             }
           },
           x: {
             grid: {
               display: false
+            },
+            ticks: {
+              color: '#64748b',
+              font: { size: 11 }
             }
           }
         }

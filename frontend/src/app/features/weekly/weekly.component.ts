@@ -9,36 +9,71 @@ import { getWeekStartMadrid, getWeekOptions } from '../../shared/utils/timezone'
   standalone: true,
   imports: [FormsModule],
   template: `
-    <div class="space-y-6">
+    <div class="space-y-5">
       <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold">Registro Semanal</h2>
-        @if (saving()) {
-          <span class="text-sm text-text-muted">Guardando...</span>
-        } @else if (saved()) {
-          <span class="text-sm text-success">Guardado</span>
-        }
+        <div>
+          <h2 class="text-2xl font-bold text-text">Registro Semanal</h2>
+          <p class="text-sm text-text-muted mt-0.5">{{ selectedWeekLabel }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          @if (saving()) {
+            <div class="flex items-center gap-2 text-text-muted text-sm">
+              <div class="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+              Guardando
+            </div>
+          } @else if (saved()) {
+            <div class="flex items-center gap-1.5 text-success text-sm font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Guardado
+            </div>
+          }
+        </div>
       </div>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3">Semana</h3>
-        <select
-          [(ngModel)]="selectedWeek"
-          (change)="onWeekChange()"
-          class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition appearance-none"
-        >
+      <section class="card">
+        <h3 class="card-header text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          Seleccionar semana
+        </h3>
+        <div class="relative">
+          <select
+            [(ngModel)]="selectedWeek"
+            (change)="onWeekChange()"
+            class="input-field appearance-none cursor-pointer pr-10 w-full"
+          >
           @for (option of weekOptions; track option.weekStart) {
             <option [value]="option.weekStart">{{ option.label }}</option>
           }
-        </select>
+          </select>
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
       </section>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3 flex items-center gap-2">
-          <span class="text-xl">⚖️</span> Medidas
+      <section class="card">
+        <h3 class="card-header text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2v20"></path>
+            <path d="M18 2v20"></path>
+            <path d="M6 12h12"></path>
+            <path d="M6 7h12"></path>
+            <path d="M6 17h12"></path>
+          </svg>
+          Medidas corporales
         </h3>
-        <div class="grid grid-cols-3 gap-4">
-          <div>
-            <label class="block text-sm text-text-muted mb-1">Peso (kg)</label>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="relative">
+            <label class="block text-xs text-text-muted mb-1.5 pl-1">Peso</label>
             <input
               type="number"
               step="0.1"
@@ -46,12 +81,13 @@ import { getWeekStartMadrid, getWeekOptions } from '../../shared/utils/timezone'
               max="200"
               [(ngModel)]="weight"
               (blur)="save()"
-              placeholder="70.0"
-              class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+              placeholder="--"
+              class="input-field text-center font-semibold text-lg py-2.5"
             />
+            <span class="absolute right-3 top-8 text-xs text-text-muted">kg</span>
           </div>
-          <div>
-            <label class="block text-sm text-text-muted mb-1">Cintura (cm)</label>
+          <div class="relative">
+            <label class="block text-xs text-text-muted mb-1.5 pl-1">Cintura</label>
             <input
               type="number"
               step="0.1"
@@ -59,12 +95,13 @@ import { getWeekStartMadrid, getWeekOptions } from '../../shared/utils/timezone'
               max="150"
               [(ngModel)]="waist"
               (blur)="save()"
-              placeholder="80.0"
-              class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+              placeholder="--"
+              class="input-field text-center font-semibold text-lg py-2.5"
             />
+            <span class="absolute right-3 top-8 text-xs text-text-muted">cm</span>
           </div>
-          <div>
-            <label class="block text-sm text-text-muted mb-1">Brazo (cm)</label>
+          <div class="relative">
+            <label class="block text-xs text-text-muted mb-1.5 pl-1">Brazo</label>
             <input
               type="number"
               step="0.1"
@@ -72,54 +109,74 @@ import { getWeekStartMadrid, getWeekOptions } from '../../shared/utils/timezone'
               max="50"
               [(ngModel)]="arm"
               (blur)="save()"
-              placeholder="30.0"
-              class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+              placeholder="--"
+              class="input-field text-center font-semibold text-lg py-2.5"
             />
+            <span class="absolute right-3 top-8 text-xs text-text-muted">cm</span>
           </div>
         </div>
       </section>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3 flex items-center gap-2">
-          <span class="text-xl">😊</span> ¿Cómo te sientes?
+      <section class="card">
+        <h3 class="card-header text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+          </svg>
+          ¿Cómo te sientes?
         </h3>
-        <div class="flex gap-3">
+        <div class="flex gap-2">
           @for (feeling of feelings; track feeling.value) {
             <button
               (click)="setFeeling(feeling.value)"
               [class]="feelingClasses(feeling.value)"
             >
-              <span class="text-2xl mb-1">{{ feeling.icon }}</span>
-              <span class="block text-sm">{{ feeling.label }}</span>
+              <span class="text-2xl mb-1 block">{{ feeling.icon }}</span>
+              <span class="text-xs font-medium">{{ feeling.label }}</span>
             </button>
           }
         </div>
       </section>
 
-      <section class="bg-surface rounded-2xl p-4 shadow-sm">
-        <h3 class="font-semibold mb-3 flex items-center gap-2">
-          <span class="text-xl">📝</span> Nota semanal
+      <section class="card">
+        <h3 class="card-header text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          Nota semanal
         </h3>
         <textarea
           [(ngModel)]="note"
           (blur)="saveNote()"
-          placeholder="¿Qué tal fue esta semana? Logros, desafíos..."
+          placeholder="¿Qué tal fue esta semana? Logros, desafíos, observaciones..."
           rows="4"
-          class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition resize-none"
+          class="input-field resize-none"
         ></textarea>
       </section>
 
       @if (weeklyLog()) {
-        <section class="bg-surface rounded-2xl p-4 shadow-sm">
-          <h3 class="font-semibold mb-3">Resumen</h3>
-          <div class="grid grid-cols-2 gap-4 text-center">
-            <div class="bg-background rounded-xl p-3">
-              <div class="text-2xl font-bold text-primary">{{ weeklyLog()!.weightKg || '-' }}</div>
-              <div class="text-sm text-text-muted">kg</div>
+        <section class="card">
+          <h3 class="card-header text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Resumen de la semana
+          </h3>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="metric-card">
+              <div class="metric-value text-xl">{{ weeklyLog()!.weightKg || '--' }}</div>
+              <div class="metric-label">kg</div>
             </div>
-            <div class="bg-background rounded-xl p-3">
-              <div class="text-2xl font-bold text-primary">{{ weeklyLog()!.waistCm || '-' }}</div>
-              <div class="text-sm text-text-muted">cm cintura</div>
+            <div class="metric-card">
+              <div class="metric-value text-xl">{{ weeklyLog()!.waistCm || '--' }}</div>
+              <div class="metric-label">cintura</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value text-xl">{{ weeklyLog()!.armCm || '--' }}</div>
+              <div class="metric-label">brazo</div>
             </div>
           </div>
         </section>
@@ -148,6 +205,11 @@ export class WeeklyComponent implements OnInit {
     { value: 'same', label: 'Igual', icon: '😐' },
     { value: 'better', label: 'Mejor', icon: '😊' }
   ];
+
+  get selectedWeekLabel(): string {
+    const option = this.weekOptions.find(o => o.weekStart === this.selectedWeek);
+    return option?.label || '';
+  }
 
   ngOnInit() {
     this.loadWeekLog();
@@ -221,10 +283,7 @@ export class WeeklyComponent implements OnInit {
     if (!value) return '';
     const isActive = this.feeling === value;
     return `
-      flex-1 flex flex-col items-center justify-center p-4 rounded-xl border-2 transition
-      ${isActive 
-        ? 'border-primary bg-primary/10 text-primary' 
-        : 'border-border bg-background text-text-muted hover:border-primary/50'}
+      flex-1 btn-option ${isActive ? 'btn-option-active' : ''}
     `;
   }
 }

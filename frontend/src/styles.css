@@ -3,6 +3,7 @@
 @theme {
   --color-primary: #10b981;
   --color-primary-dark: #059669;
+  --color-primary-light: #d1fae5;
   --color-secondary: #6366f1;
   --color-background: #f8fafc;
   --color-surface: #ffffff;
@@ -12,10 +13,92 @@
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
+  --color-card-hover: #f1f5f9;
+  
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
 }
 
 @layer base {
+  html {
+    @apply antialiased scroll-smooth;
+  }
+  
   body {
     @apply bg-background text-text font-sans;
+  }
+
+  * {
+    @apply border-border;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface rounded-xl p-4 shadow-sm border border-border/50;
+  }
+  
+  .card-header {
+    @apply font-semibold text-text mb-3 flex items-center gap-2;
+  }
+
+  .btn-option {
+    @apply flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200;
+    @apply border-border bg-surface text-text-muted hover:border-primary/50 hover:bg-primary/5;
+  }
+
+  .btn-option-active {
+    @apply border-primary bg-primary/10 text-primary;
+  }
+
+  .btn-selector {
+    @apply flex-1 py-2.5 px-3 rounded-lg border-2 transition-all duration-200 text-sm font-medium text-center;
+    @apply border-border bg-surface text-text-muted hover:border-primary/50 hover:bg-primary/5;
+  }
+
+  .btn-selector-active {
+    @apply border-primary bg-primary/10 text-primary;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-border bg-surface text-text;
+    @apply focus:ring-2 focus:ring-primary/30 focus:border-primary;
+    @apply outline-none transition-all duration-200 placeholder:text-text-muted/60;
+  }
+
+  .section-title {
+    @apply font-semibold text-text flex items-center gap-2 text-sm uppercase tracking-wide;
+  }
+
+  .metric-card {
+    @apply bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 text-center border border-primary/10;
+  }
+
+  .metric-value {
+    @apply text-3xl font-bold text-primary;
+  }
+
+  .metric-label {
+    @apply text-xs text-text-muted mt-1 font-medium;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-center;
+  }
+
+  .empty-state-icon {
+    @apply text-5xl mb-3 opacity-50;
+  }
+
+  .empty-state-text {
+    @apply text-text-muted text-sm;
+  }
+}
+
+@layer utilities {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 }
