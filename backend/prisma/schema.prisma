@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DailyLog {
+  id           String   @id @default(uuid())
+  date         String   @unique
+  breakfast    Boolean  @default(false)
+  lunch        Boolean  @default(false)
+  snack        Boolean  @default(false)
+  dinner       Boolean  @default(false)
+  activityType String   @default("none")
+  energy       String   @default("medium")
+  appetite     String   @default("normal")
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model WeeklyLog {
+  id            String   @id @default(uuid())
+  weekStart     String   @unique
+  weightKg      Float?
+  waistCm       Float?
+  armCm         Float?
+  weeklyFeeling String?
+  note          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
