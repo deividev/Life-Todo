@@ -1,211 +1,165 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Card } from 'primeng/card';
+import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
+import { InputNumber } from 'primeng/inputnumber';
+import { Tag } from 'primeng/tag';
 import { WeeklyLogService } from '../../core/services/weekly-log.service';
 import { WeeklyLog, WeeklyFeeling } from '../../core/models/weekly-log.model';
 import { getWeekStartMadrid, getWeekOptions } from '../../shared/utils/timezone';
 
+interface FeelingOption {
+  value: WeeklyFeeling;
+  label: string;
+  icon: string;
+  severity: 'danger' | 'secondary' | 'success';
+}
+
 @Component({
   selector: 'app-weekly',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, Card, Select, Textarea, InputNumber, Tag],
   template: `
-    <div class="animate-fade-in space-y-5">
+    <div class="animate-fade-in">
       <div class="page-header flex items-start justify-between">
         <div>
           <h2 class="page-title">Registro Semanal</h2>
           <p class="page-subtitle">{{ selectedWeekLabel }}</p>
         </div>
-        <div class="flex items-center gap-2 mt-1">
-          @if (saving()) {
-            <div class="status-badge status-saving">
-              <div class="w-3 h-3 border-2 border-warning/30 border-t-warning rounded-full animate-spin"></div>
-              Guardando
-            </div>
-          } @else if (saved()) {
-            <div class="status-badge status-saved">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Guardado
-            </div>
-          }
-        </div>
+        @if (saving() || saved()) {
+          <p-tag 
+            [value]="saving() ? 'Guardando...' : 'Guardado'" 
+            [severity]="saving() ? 'warn' : 'success'"
+            [icon]="saving() ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+          />
+        }
       </div>
 
-      <section class="card">
-        <h3 class="card-header text-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          Semana
-        </h3>
-        <div class="relative">
-          <select
-            [(ngModel)]="selectedWeek"
-            (change)="onWeekChange()"
-            class="select-custom pr-10 cursor-pointer"
-          >
-          @for (option of weekOptions; track option.weekStart) {
-            <option [value]="option.weekStart">{{ option.label }}</option>
-          }
-          </select>
-          <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+      <p-card styleClass="mb-4">
+        <ng-template pTemplate="header">
+          <div class="flex items-center gap-2 px-5 py-4 border-b border-border-light">
+            <i class="pi pi-calendar text-primary"></i>
+            <span class="font-semibold text-sm text-text">Semana</span>
           </div>
-        </div>
-      </section>
+        </ng-template>
+        <p-select
+          [options]="weekOptions"
+          [(ngModel)]="selectedWeek"
+          (onChange)="onWeekChange()"
+          optionLabel="label"
+          optionValue="weekStart"
+          styleClass="w-full"
+          [placeholder]="'Selecciona semana'"
+        />
+      </p-card>
 
-      <section class="card">
-        <h3 class="card-header text-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2v20"></path>
-            <path d="M18 2v20"></path>
-            <path d="M6 12h12"></path>
-            <path d="M6 7h12"></path>
-            <path d="M6 17h12"></path>
-          </svg>
-          Medidas
-        </h3>
-        <div class="grid grid-cols-3 gap-3">
+      <p-card styleClass="mb-4">
+        <ng-template pTemplate="header">
+          <div class="flex items-center gap-2 px-5 py-4 border-b border-border-light">
+            <i class="pi pi-sliders-h text-primary"></i>
+            <span class="font-semibold text-sm text-text">Medidas</span>
+          </div>
+        </ng-template>
+        <div class="grid grid-cols-3 gap-4">
           <div class="text-center">
             <label class="block text-xs text-text-muted font-medium mb-2">Peso</label>
-            <div class="relative">
-              <input
-                type="number"
-                step="0.1"
-                min="30"
-                max="200"
-                [(ngModel)]="weight"
-                (blur)="save()"
-                placeholder="--"
-                class="input-number"
-              />
-              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted font-medium">kg</span>
-            </div>
+            <p-inputnumber
+              [(ngModel)]="weight"
+              (onBlur)="save()"
+              [minFractionDigits]="1"
+              [maxFractionDigits]="1"
+              [min]="30"
+              [max]="200"
+              [showButtons]="false"
+              placeholder="--"
+              inputStyleClass="input-number"
+              suffix=" kg"
+            />
           </div>
           <div class="text-center">
             <label class="block text-xs text-text-muted font-medium mb-2">Cintura</label>
-            <div class="relative">
-              <input
-                type="number"
-                step="0.1"
-                min="50"
-                max="150"
-                [(ngModel)]="waist"
-                (blur)="save()"
-                placeholder="--"
-                class="input-number"
-              />
-              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted font-medium">cm</span>
-            </div>
+            <p-inputnumber
+              [(ngModel)]="waist"
+              (onBlur)="save()"
+              [minFractionDigits]="1"
+              [maxFractionDigits]="1"
+              [min]="50"
+              [max]="150"
+              [showButtons]="false"
+              placeholder="--"
+              inputStyleClass="input-number"
+              suffix=" cm"
+            />
           </div>
           <div class="text-center">
             <label class="block text-xs text-text-muted font-medium mb-2">Brazo</label>
-            <div class="relative">
-              <input
-                type="number"
-                step="0.1"
-                min="20"
-                max="50"
-                [(ngModel)]="arm"
-                (blur)="save()"
-                placeholder="--"
-                class="input-number"
-              />
-              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted font-medium">cm</span>
-            </div>
+            <p-inputnumber
+              [(ngModel)]="arm"
+              (onBlur)="save()"
+              [minFractionDigits]="1"
+              [maxFractionDigits]="1"
+              [min]="20"
+              [max]="50"
+              [showButtons]="false"
+              placeholder="--"
+              inputStyleClass="input-number"
+              suffix=" cm"
+            />
           </div>
         </div>
-      </section>
+      </p-card>
 
-      <section class="card">
-        <h3 class="card-header text-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-            <line x1="9" y1="9" x2="9.01" y2="9"></line>
-            <line x1="15" y1="9" x2="15.01" y2="9"></line>
-          </svg>
-          ¿Cómo te sientes?
-        </h3>
+      <p-card styleClass="mb-4">
+        <ng-template pTemplate="header">
+          <div class="flex items-center gap-2 px-5 py-4 border-b border-border-light">
+            <i class="pi pi-smile text-primary"></i>
+            <span class="font-semibold text-sm text-text">¿Cómo te sientes?</span>
+          </div>
+        </ng-template>
         <div class="flex gap-3">
-          @for (f of feelings; track f.value) {
+          @for (f of feelingOptions; track f.value) {
             <button
               (click)="setFeeling(f.value)"
               [class]="feelingClasses(f.value)"
             >
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-200"
-                   [class.bg-danger/10]="f.value === 'worse' && feeling === f.value"
-                   [class.bg-text-muted/10]="f.value === 'same' && feeling === f.value"
-                   [class.bg-success/10]="f.value === 'better' && feeling === f.value"
-                   [class.bg-bg-warm]="feeling !== f.value">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     [class.text-danger]="f.value === 'worse' && feeling === f.value"
-                     [class.text-text-muted]="f.value === 'same' && feeling === f.value"
-                     [class.text-success]="f.value === 'better' && feeling === f.value"
-                     [class.text-text-muted/50]="feeling !== f.value">
-                  @switch (f.value) {
-                    @case ('worse') {
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
-                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                    }
-                    @case ('same') {
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="8" y1="15" x2="16" y2="15"></line>
-                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                    }
-                    @case ('better') {
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                    }
-                  }
-                </svg>
+              <div class="feeling-btn-icon">
+                <i [class]="'pi ' + f.icon"></i>
               </div>
-              <span class="text-xs font-semibold" [class.text-danger]="f.value === 'worse' && feeling === f.value"
-                    [class.text-success]="f.value === 'better' && feeling === f.value"
-                    [class.text-text-muted]="feeling !== f.value">{{ f.label }}</span>
+              <span class="text-xs font-medium">{{ f.label }}</span>
             </button>
           }
         </div>
-      </section>
+      </p-card>
 
-      <section class="card">
-        <h3 class="card-header text-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-          Nota semanal
-        </h3>
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="flex items-center gap-2 px-5 py-4 border-b border-border-light">
+            <i class="pi pi-pencil text-text-muted"></i>
+            <span class="font-semibold text-sm text-text">Nota semanal</span>
+          </div>
+        </ng-template>
         <textarea
+          pTextarea
           [(ngModel)]="note"
           (blur)="saveNote()"
-          placeholder="¿Qué tal fue esta semana? Logros, desafíos, observaciones..."
+          placeholder="¿Qué tal fue esta semana?"
+          [autoResize]="true"
           rows="4"
-          class="textarea-custom"
+          class="w-full"
         ></textarea>
-      </section>
+      </p-card>
 
       @if (weeklyLog()) {
         <div class="section-divider"></div>
         
-        <section class="card-elevated">
-          <h3 class="card-header text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-            Resumen de la semana
-          </h3>
+        <p-card styleClass="card-elevated">
+          <ng-template pTemplate="header">
+            <div class="flex items-center gap-2 px-5 py-4 border-b border-border-light">
+              <i class="pi pi-chart-bar text-primary"></i>
+              <span class="font-semibold text-sm text-text">Resumen</span>
+            </div>
+          </ng-template>
           <div class="grid grid-cols-3 gap-3">
             <div class="metric-card">
               <div class="metric-value">{{ weeklyLog()!.weightKg || '--' }}</div>
@@ -220,10 +174,102 @@ import { getWeekStartMadrid, getWeekOptions } from '../../shared/utils/timezone'
               <div class="metric-label">brazo</div>
             </div>
           </div>
-        </section>
+        </p-card>
       }
     </div>
-  `
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+
+    :host ::ng-deep .p-card {
+      border-radius: 1rem;
+      border: 1px solid var(--color-border-light);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    :host ::ng-deep .p-card-body {
+      padding: 0;
+    }
+
+    :host ::ng-deep .p-card-content {
+      padding: 1.25rem;
+      padding-top: 0.75rem;
+    }
+
+    :host ::ng-deep .p-select {
+      width: 100%;
+    }
+
+    :host ::ng-deep .p-select-label {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      border-radius: 0.75rem;
+      border: 2px solid var(--color-border-light);
+      background: var(--color-surface);
+    }
+
+    :host ::ng-deep .p-textarea {
+      width: 100%;
+      border: 2px solid var(--color-border-light);
+      border-radius: 0.75rem;
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-size: 0.875rem;
+      padding: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    :host ::ng-deep .p-textarea:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      outline: none;
+    }
+
+    :host ::ng-deep .p-inputnumber-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--color-border-light);
+      border-radius: 0.75rem;
+      background: var(--color-bg-warm);
+      color: var(--color-text);
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    :host ::ng-deep .p-inputnumber-input:focus {
+      border-color: var(--color-primary);
+      background: var(--color-surface);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      outline: none;
+    }
+
+    .feeling-btn {
+      @apply flex-1 flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-2 transition-all duration-200 cursor-pointer select-none;
+      @apply border-border-light bg-bg-warm text-text-secondary;
+      @apply hover:border-primary/30 hover:bg-primary-light/30;
+      @apply active:scale-[0.97];
+    }
+
+    .feeling-btn-active {
+      @apply border-primary bg-primary-light text-primary;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    .feeling-btn-icon {
+      @apply w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 text-lg;
+    }
+
+    .feeling-btn-active .feeling-btn-icon {
+      @apply bg-primary text-white;
+    }
+
+    .feeling-btn:not(.feeling-btn-active) .feeling-btn-icon {
+      @apply bg-bg text-text-muted;
+    }
+  `]
 })
 export class WeeklyComponent implements OnInit {
   private weeklyLogService = inject(WeeklyLogService);
@@ -241,10 +287,10 @@ export class WeeklyComponent implements OnInit {
   saving = signal(false);
   saved = signal(false);
 
-  feelings: { value: WeeklyFeeling; label: string }[] = [
-    { value: 'worse', label: 'Peor' },
-    { value: 'same', label: 'Igual' },
-    { value: 'better', label: 'Mejor' }
+  feelingOptions: FeelingOption[] = [
+    { value: 'worse', label: 'Peor', icon: 'pi-frown', severity: 'danger' },
+    { value: 'same', label: 'Igual', icon: 'pi-minus-circle', severity: 'secondary' },
+    { value: 'better', label: 'Mejor', icon: 'pi-smile', severity: 'success' }
   ];
 
   get selectedWeekLabel(): string {
